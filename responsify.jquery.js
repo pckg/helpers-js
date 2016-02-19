@@ -1,10 +1,17 @@
 $.fn.responsify = function (options) {
     var $this = $(this);
     $this.options = $.extend({
-        method: 'detach'
+        less: function () {
+        },
+        more: function () {
+        },
+        check: function () {
+            return true;
+        },
+        breakpoint: null
     }, options);
 
-    $this.currentDocumentWidth = $(window).width();
+    $this.currentDocumentWidth = window.innerWidth;
     $this.prevDocumentWidth = null;
 
     $this.init = function () {
@@ -13,6 +20,12 @@ $.fn.responsify = function (options) {
     };
 
     $this.windowResizeHandler = function () {
+        if (!$this.options.check()) {
+            return;
+        }
+
+        $this.currentDocumentWidth = window.innerWidth;
+
         if ($this.currentDocumentWidth <= $this.options.breakpoint && (!$this.prevDocumentWidth || $this.prevDocumentWidth > $this.options.breakpoint)) {
             $this.options.less($this);
 
@@ -21,11 +34,12 @@ $.fn.responsify = function (options) {
 
         }
 
-        $this.prevDocumentWidth = $(window).width();
+        $this.prevDocumentWidth = $this.currentDocumentWidth;
     };
 
     if ($this.length == 1) {
         $this.init();
+        return $this;
 
     } else if ($this.length > 1) {
         $this.each(function () {

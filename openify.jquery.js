@@ -35,10 +35,11 @@ $.fn.openify = function (options) {
 
     if ($this.length == 1) {
         $this.init();
+        return $this;
 
     } else if ($this.length > 1) {
         $this.each(function () {
-            $(this).statefy($this.options);
+            $(this).openify($this.options);
         });
 
     }

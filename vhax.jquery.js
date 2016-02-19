@@ -8,10 +8,11 @@ $.fn.vhax = function (options) {
     };
 
     $this.recalculate = function () {
-        $this.css('min-height', 'auto');
+        var $items = $($this.selector);
+        $items.css('min-height', 'auto');
         var minHeight = {};
         var offsetObjects = {};
-        $this.each(function () {
+        $items.each(function () {
             var offset = $(this).offset().top;
 
             if (typeof minHeight[offset] == 'undefined') {
