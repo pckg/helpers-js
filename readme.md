@@ -17,3 +17,6 @@ Apply same height to all elements.
 
 ## Vhax
 Apply same height to all elements on same x-offset.
+
+## Movify
+Move elements from $selector to $target, add/remove $class.
