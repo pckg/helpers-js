@@ -20,3 +20,6 @@ Apply same height to all elements on same x-offset.
 
 ## Movify
 Move elements from $selector to $target, add/remove $class.
+
+## Developify
+Add some basic responsive info.
