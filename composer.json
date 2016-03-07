@@ -1,0 +1,13 @@
+{
+  "name": "pckg/helpers-js",
+  "description": "Basic JS helpers",
+  "homepage": "https://github.com/pckg/helpers-js",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Bojan Rajh",
+      "email": "schtr4jh@schtr4jh.net"
+    }
+  ],
+  "minimum-stability": "dev"
+}
