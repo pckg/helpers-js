@@ -11,7 +11,7 @@
             $(window).on('resize scroll', $this.refreshAll);
         };
 
-        $this.refreshAll = function(){
+        $this.refreshAll = function () {
             $this.windowResizeHandler();
             $this.windowScrollHandler();
         };
@@ -21,7 +21,8 @@
 
             build += '<p>jQuery Window: ' + $(window).width() + ' x ' + $(window).height() + '</p>';
             build += '<p>jQuery Document: ' + $(document).width() + ' x ' + $(document).height() + '</p>';
-            build += '<p>Window: ' + window.outerWidth + ' x ' + window.outerHeight + '</p>';
+            build += '<p>Inner Window: ' + window.innerWidth + ' x ' + window.innerHeight + '</p>';
+            build += '<p>Outer Window: ' + window.outerWidth + ' x ' + window.outerHeight + '</p>';
 
             $('.developify .resize').html(build);
         };
