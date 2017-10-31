@@ -9,11 +9,13 @@
         };
 
         $this.recalculate = function () {
+            var $items = $($this.selector);
             $this.css('min-height', 'auto');
             var minHeight = 0;
-            $this.each(function () {
-                if ($(this).height() > minHeight) {
-                    minHeight = $(this).height();
+            $items.each(function () {
+                var h = parseInt($(this).outerHeight());
+                if (h > minHeight) {
+                    minHeight = h;
                 }
             });
             $this.css('min-height', minHeight);
