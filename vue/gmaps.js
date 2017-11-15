@@ -51,7 +51,8 @@ Vue.component('vue-component-gmaps', {
     data: function () {
         return {
             pins: [],
-            _gmap: null
+            _gmap: null,
+            _searchTimeout: null
         };
     },
 
@@ -269,32 +270,35 @@ Vue.component('vue-component-gmaps', {
 
         fetchsearch: function () {
             if (this.search) {
-                http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.search).success(function (data) {
-                    if (typeof data.results != 'undefined' && data.results.length > 0) {
-                        var location;
+                clearTimeout(this._searchTimeout);
 
-                        $.each(data.results, function (i, result) {
-                            if (result.geometry.location) {
-                                location = result.geometry.location;
+                this._searchTimeout = setTimeout(function () {
+                    http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.search).success(function (data) {
+                        console.log('results', data);
+                        if (typeof data.results != 'undefined' && data.results.length > 0) {
+                            var location;
 
-                                // break loop
-                                return false;
-                            }
-                        });
+                            $.each(data.results, function (i, result) {
+                                if (result.geometry.location) {
+                                    location = result.geometry.location;
 
-                        if (location) {
-                            var geo = [location.lat, location.lng];
-                            this.$set('locations', [
-                                {
-                                    geo: geo
+                                    // break loop
+                                    return false;
                                 }
-                            ]);
-                            this.fitBounds();
-                        } else {
-                            this.fitToDefault();
+                            });
+
+                            if (location) {
+                                var geo = [location.lat, location.lng];
+                                this.locations = [{
+                                    geo: geo
+                                }];
+                                this.fitBounds();
+                            } else {
+                                this.fitToDefault();
+                            }
                         }
-                    }
-                }.bind(this));
+                    }.bind(this));
+                }.bind(this), 333);
             } else {
                 this.$parent.updateLocation(null, null, null);
                 this.fitToDefault();
