@@ -238,7 +238,7 @@
              * Remove all markers from map
              */
             removeMarkers: function () {
-                for (i in this.pins) {
+                for (var i in this.pins) {
                     this.removeMarker(this.pins[i]);
                 }
                 //infowindow.close();
@@ -256,7 +256,7 @@
              * Add markers for all locations
              */
             markLocations: function () {
-                for (i in this.locations) {
+                for (var i in this.locations) {
                     var loc = this.locations[i];
                     var position = this.getLatLngFromCmsMap(loc.geo);
 
