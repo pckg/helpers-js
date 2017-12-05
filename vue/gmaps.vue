@@ -85,7 +85,6 @@
 
             singletonMap: function () {
                 if (this._gmap) {
-                    console.log("already initialized");
                     return;
                 }
 
@@ -129,7 +128,16 @@
                      console.log("fitting");
                      this.fitBounds();
                      }*/
-                    this.fitForNoMarkers();
+                    this._gmap.setOptions({minZoom: 5, maxZoom: 15});
+
+                    this.removeMarkers();
+                    this.markLocations();
+
+                    if (this.locations.length > 0) {
+                        this.fitBounds();
+                    } else {
+                        this.fitForNoMarkers();
+                    }
 
                     google.maps.event.addListener(this._gmap, 'dragend', this.afterDrag);
                     google.maps.event.addListener(this._gmap, 'zoom_changed', this.afterZoom);
@@ -155,15 +163,15 @@
             fitForOneMarker: function () {
                 console.log("fitting for one marker", this.locations[0].geo);
                 var center = this.locations[0].geo;
-                var zoom = 12;
+                var zoom = 13;
                 var centerLatLng = new google.maps.LatLng(center[0], center[1]);
 
                 this._gmap.setCenter(centerLatLng);
                 this._gmap.setZoom(zoom);
 
-                /*var latLngBounds = new google.maps.LatLngBounds();
-                 latLngBounds.extend(centerLatLng);
-                 this._gmap.fitBounds(latLngBounds);*/
+                var latLngBounds = new google.maps.LatLngBounds();
+                latLngBounds.extend(centerLatLng);
+                this._gmap.fitBounds(latLngBounds);
 
                 google.maps.event.trigger(this._gmap, 'resize');
             },
@@ -172,8 +180,6 @@
              * Fit all locations in viewport
              */
             fitBounds: function () {
-                console.log("fit bounds");
-
                 if (this.pins.length == 0) {
                     this.fitForNoMarkers();
                     return;
@@ -206,7 +212,6 @@
              * Create public marker
              */
             addPublicMarker: function (position, loc) {
-                console.log("adding marker");
                 var marker = new google.maps.Marker({
                     position: position,
                     map: this._gmap,
@@ -319,11 +324,11 @@
         },
 
         ready: function () {
-            /*if (typeof this.search != 'undefined') {
-             this.initSearch();
-             } else {
-             this.initMap();
-             }*/
+            if (typeof this.search != 'undefined') {
+                this.initSearch();
+            } else {
+                this.initMap();
+            }
         }
 
     }
