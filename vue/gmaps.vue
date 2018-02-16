@@ -221,6 +221,12 @@
                 });
                 this.pins.push(marker);
 
+                google.maps.event.addListener(marker, 'dragend', function (evt) {
+                    var val = evt.latLng.lat() + ';' + evt.latLng.lng();
+                    this.$emit('change', val);
+                    this.$emit('input', val);
+                }.bind(this));
+
                 /*if (this.infowindow) {
                  google.maps.event.addListener(marker, 'click', function () {
                  infowindow.setContent('Content');
