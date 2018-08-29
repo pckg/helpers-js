@@ -65,7 +65,6 @@
 
             'locations': function (newLocations, oldLocations) {
                 this.singletonMap();
-
                 this.locations = newLocations;
                 this.removeMarkers();
                 this.markLocations();
@@ -128,7 +127,7 @@
                      console.log("fitting");
                      this.fitBounds();
                      }*/
-                    this._gmap.setOptions({minZoom: 5, maxZoom: 15});
+                    this._gmap.setOptions({minZoom: 5/*, maxZoom: 15*/});
 
                     this.removeMarkers();
                     this.markLocations();
@@ -227,13 +226,16 @@
                     this.$emit('input', val);
                 }.bind(this));
 
-                /*if (this.infowindow) {
+                /**
+                 * @T00D00 - where is infowindow defines
+                 */
+                if (this.infowindow) {
                  google.maps.event.addListener(marker, 'click', function () {
-                 infowindow.setContent('Content');
+                 infowindow.setContent(loc.id);
                  infowindow.setPosition(marker.position);
                  infowindow.open(this._gmap);
                  }.bind(this, marker));
-                 }*/
+                 }
 
                 return marker;
             },
