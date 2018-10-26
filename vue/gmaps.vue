@@ -289,7 +289,11 @@
                     clearTimeout(this._searchTimeout);
 
                     this._searchTimeout = setTimeout(function () {
-                        http.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + this.search).success(function (data) {
+                        http.get('https://maps.googleapis.com/maps/api/geocode/json?'
+                            + (Pckg && Pckg.config && Pckg.config.apis && Pckg.config.apis.googleConsole
+                                ? 'apiKey=' + Pckg.config.apis.googleConsole + '&'
+                                : '')
+                            + 'address=' + this.search).success(function (data) {
                             console.log('results', data);
                             if (typeof data.results != 'undefined' && data.results.length > 0) {
                                 var location;
