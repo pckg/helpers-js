@@ -291,7 +291,7 @@
                     this._searchTimeout = setTimeout(function () {
                         http.get('https://maps.googleapis.com/maps/api/geocode/json?'
                             + (Pckg && Pckg.config && Pckg.config.apis && Pckg.config.apis.googleConsole
-                                ? 'apiKey=' + Pckg.config.apis.googleConsole + '&'
+                                ? 'key=' + Pckg.config.apis.googleConsole + '&'
                                 : '')
                             + 'address=' + this.search).success(function (data) {
                             console.log('results', data);
