@@ -228,6 +228,8 @@ export class Query {
     constructor() {
         this.$binds = [];
         this.$children = [];
+        this.$limit = null;
+        this.$page = 1;
     }
 
     where(key, val = true, comparator = '=') {
@@ -240,19 +242,47 @@ export class Query {
         return this;
     }
 
+    limit(limit) {
+        this.$limit = limit;
+
+        return this;
+    }
+
+    getLimit() {
+        return this.$limit;
+    }
+
+    page(page) {
+        this.$page = page;
+
+        return this;
+    }
+
+    getPage() {
+        return this.$page;
+    }
+
 }
 
 export class Entity {
 
-    constructor() {
+    constructor(repository) {
         this.$path = null;
         this.$record = Record;
         this.$repository = Repository;
+        this.$repositoryObject = repository || null;
         this.$query = Query;
+        console.log('Entity repository', repository);
+    }
+
+    setPath(path) {
+        this.$path = path;
+
+        return this;
     }
 
     getQuery() {
-        if (typeof this.$query !== Query) {
+        if (typeof this.$query !== 'object') {
             this.$query = new Query();
         }
 
@@ -265,8 +295,24 @@ export class Entity {
         return this;
     }
 
-    getRepository() {
-        return new this.$repository;
+    limit(limit) {
+        this.getQuery().limit(limit);
+
+        return this;
+    }
+
+    page(page) {
+        this.getQuery().page(page);
+
+        return this;
+    }
+
+    getRepository(create) {
+        if (!this.$repositoryObject || create) {
+            this.$repositoryObject = new this.$repository;
+        }
+
+        return this.$repositoryObject;
     }
 
     getApiPath(path) {
@@ -280,7 +326,7 @@ export class Entity {
         // first check for path
         let apiPath = this.$path;
 
-        if (!apiPath) {
+        if (!apiPath && !path) {
             return null;
         }
 
@@ -325,19 +371,31 @@ export class Entity {
         }.bind(this));
     }
 
-    all(path) {
+    all(path, dataCallback) {
         let finalPath = this.getApiPath(path);
 
         if (!finalPath) {
             return;
         }
 
-        return this.getRepository().all(finalPath).then(function (d) {
+        return this.getRepository().all(finalPath, this.getQuery()).then(function (d) {
             let keys = Object.keys(d);
             let r = this.$record;
-            return d[keys[0]].map(function (item) {
+            let key = keys[0];
+            if (keys.length > 1) {
+                if (keys.indexOf('records') >= 0) {
+                    key = 'records';
+                }
+            }
+            let mapped = d[key].map(function (item) {
                 return new r(item);
             }.bind(this));
+
+            if (dataCallback) {
+                dataCallback(d);
+            }
+
+            return mapped;
         }.bind(this));
     }
 
@@ -387,20 +445,26 @@ export class Collection {
 
 export class Repository {
 
-    constructor() {
+    constructor(repository) {
+        console.log('Repository repository', repository);
         this.$repository = HttpRepository;
+        this.$repositoryObject = repository || null;
     }
 
-    getRepository() {
-        return new this.$repository;
+    getRepository(create) {
+        if (!this.$repositoryObject || create) {
+            this.$repositoryObject = new this.$repository;
+        }
+
+        return this.$repositoryObject;
     }
 
     one(path) {
         return this.getRepository().one(path);
     }
 
-    all(path) {
-        return this.getRepository().all(path);
+    all(path, query) {
+        return this.getRepository().all(path, query);
     }
 
     get(path) {
@@ -418,20 +482,41 @@ export class Repository {
  */
 export class HttpRepository {
 
-    constructor() {
-        this.$endpoint = '/api';
+    constructor(endpoint = '/api') {
+        console.log('HttpRepository endpoint', endpoint);
+        this.$endpoint = endpoint;
     }
 
-    makeGetRequest(path) {
+    setEndpoint(endpoint) {
+        this.$endpoint = endpoint;
+
+        return this;
+    }
+
+    makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
+            console.log('query', query);
             // make http get request
-            http.get(this.$endpoint + path, function (data) {
+
+            let headers = {
+                'X-Pckg-Orm-Filters': JSON.stringify(query ? query.$children : []),
+                'X-Pckg-Orm-Fields': JSON.stringify(query ? query.$children : []),
+                'X-Pckg-Orm-Paginator': JSON.stringify(query ? {
+                    page: query.getPage(),
+                    limit: query.getLimit()
+                } : {
+                    page: 1,
+                    limit: null
+                }),
+            };
+            console.log('headers', headers);
+            http.get((this.$endpoint || '') + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
                 // return array
                 reject({message: 'Error making HTTP GET request', data: data});
-            });
+            }, {headers: headers});
         }.bind(this)));
 
     }
@@ -444,8 +529,8 @@ export class HttpRepository {
         return this.makeGetRequest(path);
     }
 
-    all(path) {
-        return this.makeGetRequest(path);
+    all(path, query) {
+        return this.makeGetRequest(path, query);
     }
 
     post(path, params) {
