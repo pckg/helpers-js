@@ -228,15 +228,40 @@ export class Query {
     constructor() {
         this.$binds = [];
         this.$children = [];
+        this.$fields = {};
         this.$limit = null;
         this.$page = 1;
+        this.$direction = null;
+        this.$sort = null;
+    }
+
+    select(fields) {
+        this.$fields = fields;
+
+        return this;
+    }
+
+    addSelect(fields) {
+        if (typeof fields == 'string') {
+            let t = {};
+            t[fields] = fields;
+            fields = t;
+        }
+
+        this.$fields = Object.assign(this.$fields, fields);
+
+        return this;
+    }
+
+    getFields() {
+        return this.$fields;
     }
 
     where(key, val = true, comparator = '=') {
         this.$children.push({
-            key: key,
-            value: val,
-            comparator: comparator
+            k: key,
+            v: val,
+            c: comparator
         });
 
         return this;
@@ -262,6 +287,30 @@ export class Query {
         return this.$page;
     }
 
+    sort(sort) {
+        this.$sort = sort;
+
+        return this;
+    }
+
+    getSort() {
+        return this.$sort;
+    }
+
+    direction(direction) {
+        this.$direction = direction;
+
+        return this;
+    }
+
+    getDirection() {
+        return this.$direction;
+    }
+
+    getFilters() {
+        return this.$children;
+    }
+
 }
 
 export class Entity {
@@ -272,7 +321,6 @@ export class Entity {
         this.$repository = Repository;
         this.$repositoryObject = repository || null;
         this.$query = Query;
-        console.log('Entity repository', repository);
     }
 
     setPath(path) {
@@ -317,6 +365,7 @@ export class Entity {
 
     getApiPath(path) {
         // path: null -> /api/users
+        // path: null -> /api/users
         // path: admin -> /api/users/admin
         // path: [1] -> /api/users/1
         // path: [1, 'orders'] -> /api/users/1/orders
@@ -331,13 +380,15 @@ export class Entity {
         }
 
         // build fetch path
-        let finalPath = '/' + apiPath;
+        let finalPath = apiPath ? '/' + apiPath : '';
         if (typeof path === 'string') {
             if (path.indexOf('/') === 0) {
                 finalPath = path;
             } else {
                 finalPath += '/' + path;
             }
+        } else if (typeof path == 'number') {
+            finalPath += "" + path;
         } else if (Array.isArray(path) && path.length > 0) {
             finalPath += '/' + path.join('/');
         } else if (!path) {
@@ -361,10 +412,6 @@ export class Entity {
 
         let finalPath = this.getApiPath();
 
-        if (!finalPath) {
-            return;
-        }
-
         return this.getRepository().one(finalPath).then(function (d) {
             let keys = Object.keys(d);
             return new this.$record(keys.length == 1 ? d[keys[0]] : {});
@@ -373,10 +420,6 @@ export class Entity {
 
     all(path, dataCallback) {
         let finalPath = this.getApiPath(path);
-
-        if (!finalPath) {
-            return;
-        }
 
         return this.getRepository().all(finalPath, this.getQuery()).then(function (d) {
             let keys = Object.keys(d);
@@ -493,30 +536,33 @@ export class HttpRepository {
         return this;
     }
 
+    getQueryHeaders(query) {
+        return {
+            'X-Pckg-Orm-Filters': JSON.stringify(query ? query.getFilters() : []),
+            'X-Pckg-Orm-Fields': JSON.stringify(query ? query.getFields() : []),
+            'X-Pckg-Orm-Paginator': JSON.stringify(query ? {
+                page: query.getPage(),
+                limit: query.getLimit(),
+                sort: query.getSort(),
+                dir: query.getDirection()
+            } : {
+                page: 1,
+                limit: null,
+                sort: null,
+                dir: null
+            }),
+        };
+    }
+
     makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
-            console.log('query', query);
-            // make http get request
-
-            let headers = {
-                'X-Pckg-Orm-Filters': JSON.stringify(query ? query.$children : []),
-                'X-Pckg-Orm-Fields': JSON.stringify(query ? query.$children : []),
-                'X-Pckg-Orm-Paginator': JSON.stringify(query ? {
-                    page: query.getPage(),
-                    limit: query.getLimit()
-                } : {
-                    page: 1,
-                    limit: null
-                }),
-            };
-            console.log('headers', headers);
             http.get((this.$endpoint || '') + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
                 // return array
                 reject({message: 'Error making HTTP GET request', data: data});
-            }, {headers: headers});
+            }, {headers: this.getQueryHeaders(query)});
         }.bind(this)));
 
     }
@@ -536,7 +582,7 @@ export class HttpRepository {
     post(path, params) {
         return new Promise(function (resolve, reject) {
             // make post request
-            http.post(this.$endpoint + path, params, function (data) {
+            http.post((this.$endpoint || '') + path, params, function (data) {
                 // this is what api returns
                 let dataObject = {id: 3, title: 'Three'};
 
@@ -555,16 +601,22 @@ export class HttpRepository {
  */
 export class HttpQLRepository extends HttpRepository {
 
-    makeGetRequest(path) {
+    makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
+            let options = {type: 'SEARCH'};
+            let queryData = this.getQueryHeaders(query);
+
+            let length = JSON.stringify(queryData).length;
+            options[true || length > 6144 ? 'data' : 'headers'] = queryData;
+
             // make http get request
-            http.get(this.$endpoint + '?path=' + path, function (data) {
+            http.get((this.$endpoint || '') + '?path=' + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
                 // return array
                 reject({message: 'Error making HTTP GET request', data: data});
-            });
+            }, options);
         }.bind(this)));
 
     }
