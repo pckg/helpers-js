@@ -233,12 +233,23 @@ export class Query {
         this.$page = 1;
         this.$direction = null;
         this.$sort = null;
+        this.$search = null;
     }
 
     select(fields) {
         this.$fields = fields;
 
         return this;
+    }
+
+    search(search) {
+        this.$search = search;
+
+        return this;
+    }
+
+    getSearch() {
+        return this.$search;
     }
 
     addSelect(fields) {
@@ -538,6 +549,7 @@ export class HttpRepository {
 
     getQueryHeaders(query) {
         return {
+            'X-Pckg-Orm-Search': JSON.stringify(query ? query.getSearch() : null),
             'X-Pckg-Orm-Filters': JSON.stringify(query ? query.getFilters() : []),
             'X-Pckg-Orm-Fields': JSON.stringify(query ? query.getFields() : []),
             'X-Pckg-Orm-Paginator': JSON.stringify(query ? {
