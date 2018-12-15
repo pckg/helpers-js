@@ -234,6 +234,7 @@ export class Query {
         this.$direction = null;
         this.$sort = null;
         this.$search = null;
+        this.$meta = {};
     }
 
     select(fields) {
@@ -320,6 +321,16 @@ export class Query {
 
     getFilters() {
         return this.$children;
+    }
+
+    setMeta(meta) {
+        this.$meta = meta;
+
+        return this;
+    }
+
+    getMeta() {
+        return this.$meta;
     }
 
 }
@@ -549,6 +560,7 @@ export class HttpRepository {
 
     getQueryHeaders(query) {
         return {
+            'X-Pckg-Orm-Meta': JSON.stringify(query ? query.getMeta() : null),
             'X-Pckg-Orm-Search': JSON.stringify(query ? query.getSearch() : null),
             'X-Pckg-Orm-Filters': JSON.stringify(query ? query.getFilters() : []),
             'X-Pckg-Orm-Fields': JSON.stringify(query ? query.getFields() : []),
