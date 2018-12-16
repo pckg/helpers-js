@@ -548,7 +548,6 @@ export class Repository {
 export class HttpRepository {
 
     constructor(endpoint = '/api') {
-        console.log('HttpRepository endpoint', endpoint);
         this.$endpoint = endpoint;
     }
 
@@ -639,7 +638,7 @@ export class HttpQLRepository extends HttpRepository {
                 resolve(data);
             }, function (data) {
                 // return array
-                reject({message: 'Error making HTTP GET request', data: data});
+                reject({message: 'Error making HTTP SEARCH request', data: data});
             }, options);
         }.bind(this)));
 
