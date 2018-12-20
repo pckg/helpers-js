@@ -410,7 +410,7 @@ export class Entity {
                 finalPath += '/' + path;
             }
         } else if (typeof path == 'number') {
-            finalPath += "" + path;
+            finalPath += "/" + path;
         } else if (Array.isArray(path) && path.length > 0) {
             finalPath += '/' + path.join('/');
         } else if (!path) {
@@ -427,12 +427,12 @@ export class Entity {
     }
 
     one(id) {
-        if (id) {
+        /*if (id) {
             this.where('id', id);
             id = null;
-        }
+        }*/
 
-        let finalPath = this.getApiPath();
+        let finalPath = this.getApiPath(id);
 
         return this.getRepository().one(finalPath).then(function (d) {
             let keys = Object.keys(d);
