@@ -440,6 +440,18 @@ export class Entity {
         }.bind(this));
     }
 
+    exp(path, dataCallback) {
+        let finalPath = this.getApiPath(path);
+
+        return this.getRepository().exp(finalPath, this.getQuery()).then(function (d) {
+            if (dataCallback) {
+                dataCallback(d);
+            }
+
+            return d;
+        }.bind(this));
+    }
+
     all(path, dataCallback) {
         let finalPath = this.getApiPath(path);
 
@@ -540,6 +552,10 @@ export class Repository {
         return this.getRepository().post(path, params);
     }
 
+    exp(path, params) {
+        return this.getRepository().exp(path, params);
+    }
+
 }
 
 /**
@@ -602,6 +618,10 @@ export class HttpRepository {
         return this.makeGetRequest(path, query);
     }
 
+    exp(path, query) {
+        return this.makeGetRequest(path, query);
+    }
+
     post(path, params) {
         return new Promise(function (resolve, reject) {
             // make post request
@@ -624,7 +644,31 @@ export class HttpRepository {
  */
 export class HttpQLRepository extends HttpRepository {
 
+    all(path, query) {
+        return this.makeSearchRequest(path, query);
+    }
+
     makeGetRequest(path, query) {
+        return (new Promise(function (resolve, reject) {
+            let options = {type: 'SEARCH'};
+            let queryData = this.getQueryHeaders(query);
+
+            let length = JSON.stringify(queryData).length;
+            options[true || length > 6144 ? 'data' : 'headers'] = queryData;
+
+            // make http get request
+            http.get((this.$endpoint || '') + '?path=' + path, function (data) {
+                // return array
+                resolve(data);
+            }, function (data) {
+                // return array
+                reject({message: 'Error making HTTP GET request', data: data});
+            }, options);
+        }.bind(this)));
+
+    }
+
+    makeSearchRequest(path, query) {
         return (new Promise(function (resolve, reject) {
             let options = {type: 'SEARCH'};
             let queryData = this.getQueryHeaders(query);
