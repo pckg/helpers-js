@@ -2,6 +2,7 @@
     <span class="d-input-checkbox">
         <input type="checkbox" :name="name" :id="id" :value="value" :disabled="disabled" v-show="false"/>
         <i @click.prevent="toggleValue" :class="iconClass"></i>
+        <label @click.prevent="toggleValue"><slot></slot></label>
     </span>
 </template>
 

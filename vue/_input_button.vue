@@ -1,7 +1,7 @@
 <template>
     <button type="button" class="btn btn-default">
         <i :class="icon" v-if="icon"></i>
-        {{ text }}
+        {{ text }}<slot></slot>
         <pckg-loader v-if="loading" :loading="loading"></pckg-loader>
     </button>
 </template>
