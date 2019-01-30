@@ -16,6 +16,18 @@
                 default: null
             }
         },
+        watch: {
+            value: function (value) {
+                this.myValue = value;
+            },
+            myValue: function (value) {
+                this.$emit('input', value);
+            },
+        },
+        model: {
+            prop: 'value',
+            //event: 'input'
+        },
         data: function () {
             return {
                 myValue: this.value,
