@@ -1,5 +1,5 @@
 <template>
-    <button type="button" class="btn btn-default">
+    <button :type="type" class="btn btn-default">
         <i :class="icon" v-if="icon"></i>
         {{ text }}<slot></slot>
         <pckg-loader v-if="loading" :loading="loading"></pckg-loader>
@@ -19,6 +19,9 @@
             },
             icon: {
                 default: null
+            },
+            type: {
+                default: 'button'
             }
         }
     }
