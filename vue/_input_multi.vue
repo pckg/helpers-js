@@ -2,7 +2,7 @@
     <div class="input-group">
 
         <div class="form-control color-grayish" v-if="!myValue || myValue.length === 0">default</div>
-        <div class="form-control" v-else-if="myValue.indexOf('@') === 0">
+        <div class="form-control" v-else-if="myValue.indexOf('--') === 0">
             {{ options.static[myValue] }}
         </div>
         <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
@@ -65,21 +65,21 @@
         },
         watch: {
             value: function (newVal) {
-                if ((newVal && newVal.indexOf('@') === 0) || !newVal) {
-                    console.log('first var', newVal);
+                if ((newVal && newVal.indexOf('--') === 0) || !newVal) {
+                    console.log('static, variable', newVal);
                     this.myCustomValue = '';
                     this.myValue = newVal;
                     return;
                 }
 
                 if (newVal.length === 0) {
-                    console.log('second null', newVal);
+                    console.log('empty value', newVal);
                     this.myCustomValue = '';
                     this.myValue = '';
                     return;
                 }
 
-                console.log('third custom', newVal);
+                console.log('dynamic, custom', newVal);
                 this.myCustomValue = newVal.replace(/[^0-9.]/g, "")
                 this.myValue = newVal.replace(this.myCustomValue + '', '');
             },
@@ -97,7 +97,7 @@
                     return;
                 }
 
-                if (value.indexOf('@') !== 0) {
+                if (value.indexOf('--') !== 0) {
                     this.$emit('input', this.myCustomValue + this.myValue);
                     return;
                 }
