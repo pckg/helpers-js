@@ -20,6 +20,9 @@
             },
             value: {
                 default: ''
+            },
+            required: {
+                default: true
             }
         },
         data: function () {
@@ -46,8 +49,16 @@
                 if (this.myMultiple && this.myValue.indexOf(value) === -1) {
                     this.myValue.push(value);
                 } else if (!this.myMultiple) {
-                    this.myValue = value;
+                    if (this.myValue == value && !this.required) {
+                        this.myValue = null;
+                    } else {
+                        this.myValue = value;
+                    }
+                } else if (!this.required) {
+                    this.myValue = null;
                 }
+
+                this.$emit('value', this.myValue);
             },
             getOptionClass: function (value) {
                 if (Array.isArray(this.myValue)) {
