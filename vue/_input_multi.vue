@@ -1,10 +1,9 @@
 <template>
     <div class="input-group">
 
-        <div class="form-control color-grayish" v-if="!myValue || myValue.length === 0">default</div>
-        <div class="form-control" v-else-if="myValue.indexOf('--') === 0">
-            {{ options.static[myValue] }}
-        </div>
+        <input type="text" readonly value="default" class="form-control" v-if="!myValue || myValue.length === 0" />
+        <input type="text" readonly v-model="options.static[myValue]" class="form-control" v-else-if="myValue.indexOf('--') === 0" />
+
         <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
 
         <span class="input-group-addon">
@@ -12,7 +11,7 @@
                aria-haspopup="true"
                aria-expanded="false" title="View more options">
                 <span v-if="options.dynamic[myValue]">{{ options.dynamic[myValue] }}</span>
-                <i class="fa fa-fw fa-chevron-down" v-else></i>
+                <i v-else class="far fa-chevron-down"></i>
             </a>
             <ul class="dropdown-menu">
                 <li>
