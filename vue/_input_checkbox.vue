@@ -1,5 +1,5 @@
 <template>
-    <span class="d-input-checkbox">
+    <span class="d-input-checkbox" :class="disabled ? 'is-disabled' : ''">
         <input type="checkbox" :name="name" :id="id" :value="value" :disabled="disabled" v-show="false"/>
         <i @click.prevent="toggleValue" :class="iconClass"></i>
         <label @click="toggleValue"><slot></slot></label>
@@ -34,6 +34,10 @@
         },
         methods: {
             toggleValue: function () {
+                if (this.disabled) {
+                    return;
+                }
+
                 if (Array.isArray(this.cModel)) {
                     if (this.cModel.indexOf(this.value) >= 0) {
                         this.cModel.splice(this.cModel.indexOf(this.value), 1);
