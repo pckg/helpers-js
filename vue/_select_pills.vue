@@ -1,7 +1,10 @@
 <template>
     <div class="d-select-pills">
         <span v-for="(option, key) in options" class="pill" :class="getOptionClass(key)"
-              @click.prevent="selectOption(key)">{{ option }}</span>
+              @click.prevent="selectOption(key)">
+            <i v-if="icon" class="fa fa-fw" :class="'fa+' + option.icon" :title="option.title"></i>
+            <template v-else>{{ option }}</template>
+        </span>
     </div>
 </template>
 
@@ -23,6 +26,9 @@
             },
             required: {
                 default: true
+            },
+            icon: {
+                default: false
             }
         },
         data: function () {
