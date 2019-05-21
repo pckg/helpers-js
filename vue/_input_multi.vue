@@ -1,8 +1,9 @@
 <template>
     <div class="input-group">
 
-        <input type="text" readonly value="default" class="form-control" v-if="!myValue || myValue.length === 0" />
-        <input type="text" readonly v-model="options.static[myValue]" class="form-control" v-else-if="myValue.indexOf('--') === 0" />
+        <input type="text" readonly value="default" class="form-control" v-if="!myValue || myValue.length === 0"/>
+        <input type="text" readonly v-model="options.static[myValue]" class="form-control"
+               v-else-if="myValue.indexOf('--') === 0"/>
 
         <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
 
@@ -19,14 +20,20 @@
                         default
                     </a>
                 </li>
-                <li role="separator" class="divider"></li>
-                <li v-for="(option, c) in options.static">
+                <li role="separator" class="divider" v-if="Object.keys(options.preset || {}).length > 0"></li>
+                <li v-for="(option, c) in options.preset || {}">
+                    <a href="#" @click.prevent="select(c, 'preset')">
+                        {{ option }}
+                    </a>
+                </li>
+                <li role="separator" class="divider" v-if="Object.keys(options.static || {}).length > 0"></li>
+                <li v-for="(option, c) in options.static || {}">
                     <a href="#" @click.prevent="select(c, 'static')">
                         {{ option }}
                     </a>
                 </li>
-                <li role="separator" class="divider"></li>
-                <li v-for="(option, v) in options.dynamic">
+                <li role="separator" class="divider" v-if="Object.keys(options.dynamic || {}).length > 0"></li>
+                <li v-for="(option, v) in options.dynamic || {}">
                     <a href="#" @click.prevent="select(v, 'dynamic')">
                         {{ option }}
                     </a>
@@ -44,8 +51,9 @@
                 type: Object,
                 default: function () {
                     return {
-                        static: {},
+                        preset: {},
                         dynamic: {},
+                        static: {},
                     };
                 }
             },
@@ -64,23 +72,21 @@
         },
         watch: {
             value: function (newVal) {
-                if ((newVal && newVal.indexOf('--') === 0) || !newVal) {
-                    console.log('static, variable', newVal);
+                if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
                     this.myCustomValue = '';
                     this.myValue = newVal;
                     return;
                 }
 
-                if (newVal.length === 0) {
-                    console.log('empty value', newVal);
-                    this.myCustomValue = '';
-                    this.myValue = '';
-                    return;
-                }
-
-                console.log('dynamic, custom', newVal);
-                this.myCustomValue = newVal.replace(/[^0-9.]/g, "")
-                this.myValue = newVal.replace(this.myCustomValue + '', '');
+                let found = false;
+                $.each(this.options.dynamic, function (key, title) {
+                    if (newVal.indexOf(key) > 0) {
+                        this.myValue = key;
+                        this.myCustomValue = newVal.substring(0, newVal.indexOf(key));
+                        found = true;
+                        return false;
+                    }
+                }.bind(this));
             },
             myCustomValue: function (newVal) {
                 this.$emit('input', newVal + this.myValue);
@@ -88,23 +94,14 @@
         },
         methods: {
             select: function (value, type) {
-                this.myValue = value;
-
-                if (!value) {
-                    this.myCustomValue = '';
-                    this.$emit('input', this.myValue);
-                    return;
+                if (type == 'dynamic' || type == 'static') {
+                    this.myValue = value;
+                } else if (type == 'preset') {
+                    this.myCustomValue = newVal.replace(/[^0-9.]/g, '');
+                    this.myValue = newVal.replace(this.myCustomValue, '');
                 }
 
-                if (value.indexOf('--') !== 0) {
-                    this.$emit('input', this.myCustomValue + this.myValue);
-                    return;
-                }
-
-                this.$emit('input', this.myValue);
-                this.$nextTick(function () {
-                    $(this.$el).find('input.form-control').focus();
-                }.bind(this));
+                this.$emit('input', value);
             }
         }
     }

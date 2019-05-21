@@ -64,7 +64,7 @@
                     this.myValue = null;
                 }
 
-                this.$emit('value', this.myValue);
+                this.$emit('input', this.myValue);
             },
             getOptionClass: function (value) {
                 if (Array.isArray(this.myValue)) {
