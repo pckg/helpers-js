@@ -1,14 +1,14 @@
 <template>
-    <span class="d-input-color">
-        <span @click.prevent="visible = !visible" class="preview" :style="{'background-color':myValue}"></span>
+    <span class="d-input-color" :class="{'active' : visible}">
+        <span @click.prevent="handleClick" class="preview" :style="{'background-color':myValue}"></span>
         <input type="text" v-model="myValue" class="model"/>
-        <span class="over" v-if="visible">
+        <span class="over" :class="{'--right' : rightClass} "v-if="visible">
             <div class="as-table align-top">
                 <div>
                     <color-picker v-model="myValue" :width="180" :height="180"></color-picker>
                 </div>
-                <div>
-                    <span v-for="color in colors" class="pill --square" :style="{backgroundColor: color}"
+                <div class="flex-wrap u-align-spaced margin-left-xs">
+                    <span v-for="color in colors" class="__sample" :style="{backgroundColor: color}"
                           :title="color"></span>
                 </div>
             </div>
@@ -38,7 +38,8 @@
         data: function () {
             return {
                 myValue: this.value,
-                visible: false
+                visible: false,
+                rightClass: false
             };
         },
         methods: {
@@ -48,6 +49,17 @@
                 }
 
                 this.visible = false;
+            },
+            handleClick: function (event) {
+              let elementLeft = event.target.getBoundingClientRect().left,
+                  windowRight = document.body.getBoundingClientRect().right,
+                  offset = windowRight - elementLeft;
+
+              if (offset < 320) { // width of the `.over` element plus some additional security buffer (padding)
+                this.rightClass = true;
+              }
+
+              this.visible = !this.visible;
             }
         },
         mounted: function () {
