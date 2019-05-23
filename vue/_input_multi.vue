@@ -59,11 +59,14 @@
             },
             value: {
                 default: ''
+            },
+            isRequired: {
+                default: false
             }
         },
         data: function () {
             return {
-                myValue: this.value,
+                myValue: null,
                 myCustomValue: ''
             };
         },
@@ -71,25 +74,27 @@
             prop: 'value'
         },
         watch: {
-            value: function (newVal) {
-                if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
-                    this.myCustomValue = '';
-                    this.myValue = newVal;
-                    return;
-                }
-
-                let found = false;
-                $.each(this.options.dynamic, function (key, title) {
-                    if (newVal.indexOf(key) > 0) {
-                        this.myValue = key;
-                        this.myCustomValue = newVal.substring(0, newVal.indexOf(key));
-                        found = true;
-                        return false;
+            value: {
+                immediate: true, handler: function (newVal) {
+                    if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
+                        this.myCustomValue = '';
+                        this.myValue = newVal;
+                        return;
                     }
-                }.bind(this));
-            },
-            myCustomValue: function (newVal) {
-                this.$emit('input', newVal + this.myValue);
+
+                    let found = false;
+                    $.each(this.options.dynamic, function (key, title) {
+                        if (newVal.indexOf(key) > 0) {
+                            this.myValue = key;
+                            this.myCustomValue = newVal.substring(0, newVal.indexOf(key));
+                            found = true;
+                            return false;
+                        }
+                    }.bind(this));
+                },
+                myCustomValue: function (newVal) {
+                    this.$emit('input', newVal + this.myValue);
+                }
             }
         },
         methods: {
