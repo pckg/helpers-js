@@ -1,5 +1,5 @@
 <template>
-    <div class="input-group">
+    <div class="d-input-multi input-group" :class="componentClass" @click.prevent="componentClicked">
 
         <input type="text" readonly value="default" class="form-control" v-if="!myValue || myValue.length === 0"/>
         <input type="text" readonly v-model="options.static[myValue]" class="form-control"
@@ -12,9 +12,9 @@
                aria-haspopup="true"
                aria-expanded="false" title="View more options">
                 <span v-if="options.dynamic[myValue]">{{ options.dynamic[myValue] }}</span>
-                <i v-else class="far fa-chevron-down"></i>
+                <i v-else class="__more-icon far fa-chevron-down"></i>
             </a>
-            <ul class="dropdown-menu">
+            <ul class="dropdown-menu dropdown-menu-right">
                 <li>
                     <a href="#" @click.prevent="select('')">
                         default
@@ -107,6 +107,21 @@
                 }
 
                 this.$emit('input', value);
+            },
+            openComponent: function () {
+                $(this.$el).find('.input-group-addon').addClass('open');
+            }
+        },
+        computed: {
+            componentClass: function () {
+                if (!this.myValue || this.myValue == '') {
+                    return 'cursor-pointer';
+                }
+            },
+            componentClicked: function () {
+                if (!this.myValue || this.myValue == '') {
+                    this.openComponent();
+                }
             }
         }
     }
