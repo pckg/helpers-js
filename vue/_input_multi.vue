@@ -1,9 +1,19 @@
 <template>
-    <div class="d-input-multi input-group" :class="componentClass" @click.prevent="componentClicked">
+    <div class="d-input-multi input-group" :class="componentClass" @click.self.prevent.stop="componentClicked">
 
-        <input type="text" readonly value="default" class="form-control" v-if="!myValue || myValue.length === 0"/>
-        <input type="text" readonly v-model="options.static[myValue]" class="form-control"
-               v-else-if="myValue.indexOf('--') === 0"/>
+        <input v-if="!myValue || myValue.length === 0"
+               type="text"
+               readonly
+               value="default"
+               class="form-control inherit-cursor"
+               @click.self.prevent.stop="componentClicked"/>
+
+        <input v-else-if="myValue.indexOf('--') === 0"
+               type="text"
+               readonly
+               v-model="options.static[myValue]"
+               class="form-control inherit-cursor"
+               @click.self.prevent.stop="componentClicked"/>
 
         <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
 
@@ -74,6 +84,9 @@
             prop: 'value'
         },
         watch: {
+            myCustomValue: function () {
+                this.emitValue();
+            },
             value: {
                 immediate: true, handler: function (newVal) {
                     if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
@@ -99,28 +112,63 @@
         },
         methods: {
             select: function (value, type) {
-                if (type == 'dynamic' || type == 'static') {
+                /**
+                 * Static value: --var-sth
+                 */
+                if (type === 'static') {
+                    console.log('static');
                     this.myValue = value;
-                } else if (type == 'preset') {
-                    this.myCustomValue = newVal.replace(/[^0-9.]/g, '');
-                    this.myValue = newVal.replace(this.myCustomValue, '');
+                    this.myCustomValue = '';
                 }
 
-                this.$emit('input', value);
+                /**
+                 * Dynamic value: px
+                 */
+                if (type === 'dynamic') {
+                    console.log('dynamic');
+                    this.myValue = value;
+                    if (this.myCustomValue.length === 0) {
+                        this.myCustomValue = '10';
+                    }
+                }
+
+                /**
+                 * Preset value: 10px
+                 */
+                if (type === 'preset') {
+                    console.log('preset');
+                    this.myValue = value.replace(this.myCustomValue, '');
+                    this.myCustomValue = value.replace(/[^0-9.]/g, '');
+                }
+
+                /**
+                 * Reset
+                 */
+                if (!type) {
+                    this.myValue = '';
+                    this.myCustomValue = '';
+                }
+
+                this.emitValue();
+            },
+            emitValue: function () {
+                this.$emit('input', `${this.myCustomValue}${this.myValue}`);
             },
             openComponent: function () {
-                $(this.$el).find('.input-group-addon').addClass('open');
+                $(this.$el).find('.input-group-addon').toggleClass('open');
+            },
+            componentClicked: function () {
+                if ($(this.$el).find('.open').length > 0) {
+                    return;
+                }
+
+                this.openComponent();
             }
         },
         computed: {
             componentClass: function () {
-                if (!this.myValue || this.myValue == '') {
+                if (!this.myValue || this.myValue.length === 0 || this.myValue.indexOf('--') === 0) {
                     return 'cursor-pointer';
-                }
-            },
-            componentClicked: function () {
-                if (!this.myValue || this.myValue == '') {
-                    this.openComponent();
                 }
             }
         }
