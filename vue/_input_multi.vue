@@ -1,18 +1,25 @@
 <template>
     <div class="d-input-multi input-group" :class="componentClass" @click.self.prevent.stop="componentClicked">
 
-        <input v-if="!myValue || myValue.length === 0"
+        <input v-if="myValue === '0'"
+               type="text"
+               readonly
+               value="0"
+               class="form-control inherit-cursor js-zero"
+               @click.self.prevent.stop="componentClicked"/>
+
+        <input v-else-if="!myValue || myValue.length === 0"
                type="text"
                readonly
                value="default"
-               class="form-control inherit-cursor"
+               class="form-control inherit-cursor js-var"
                @click.self.prevent.stop="componentClicked"/>
 
         <input v-else-if="myValue.indexOf('--') === 0"
                type="text"
                readonly
                v-model="options.static[myValue]"
-               class="form-control inherit-cursor"
+               class="form-control inherit-cursor js-var"
                @click.self.prevent.stop="componentClicked"/>
 
         <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
@@ -31,19 +38,19 @@
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.preset || {}).length > 0"></li>
-                <li v-for="(option, c) in options.preset || {}">
+                <li v-for="(option, c) in options.preset || {}" :class="c === `${myCustomValue}${myValue}` ? 'is-active' : ''">
                     <a href="#" @click.prevent="select(c, 'preset')">
                         {{ option }}
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.static || {}).length > 0"></li>
-                <li v-for="(option, c) in options.static || {}">
+                <li v-for="(option, c) in options.static || {}" :class="c === myValue ? 'is-active' : ''">
                     <a href="#" @click.prevent="select(c, 'static')">
                         {{ option }}
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.dynamic || {}).length > 0"></li>
-                <li v-for="(option, v) in options.dynamic || {}">
+                <li v-for="(option, v) in options.dynamic || {}" :class="c === myValue ? 'is-active' : ''">
                     <a href="#" @click.prevent="select(v, 'dynamic')">
                         {{ option }}
                     </a>
@@ -100,6 +107,23 @@
                         if (newVal.indexOf(key) > 0) {
                             this.myValue = key;
                             this.myCustomValue = newVal.substring(0, newVal.indexOf(key));
+                            found = true;
+                            return false;
+                        }
+                    }.bind(this));
+
+                    if (found) {
+                        return;
+                    }
+
+                    $.each(this.options.preset, function (key, title) { // 0, 10px
+                        if (newVal === key) {
+                            if (key === '0') {
+                                this.myValue = key;
+                                this.myCustomValue = '';
+                            } else {
+                                this.select(key, 'preset');
+                            }
                             found = true;
                             return false;
                         }
