@@ -45,6 +45,9 @@
             },
             options: function (newVal) {
                 this.myOptions = newVal;
+            },
+            value: function (newVal) {
+                this.myValue = newVal;
             }
         },
         model: {
