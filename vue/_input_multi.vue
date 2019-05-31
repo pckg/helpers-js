@@ -1,28 +1,25 @@
 <template>
-    <div class="d-input-multi input-group" :class="componentClass" @click.self.prevent.stop="componentClicked">
+    <div class="d-input-multi input-group" :class="componentClass" @click.self.prevent="componentClicked">
 
-        <input v-if="['0', 'auto'].indexOf(myValue) >= 0"
-               type="text"
-               readonly
-               :value="myValue"
-               class="form-control inherit-cursor js-zero"
-               @click.self.prevent.stop="componentClicked"/>
+        <span v-if="!myValue || myValue.length === 0"
+              @click.self.prevent="componentClicked"
+              class="__input-value --default inherit-cursor color-grayish">default</span>
 
-        <input v-else-if="!myValue || myValue.length === 0"
-               type="text"
-               readonly
-               value="default"
-               class="form-control inherit-cursor js-default"
-               @click.self.prevent.stop="componentClicked"/>
+        <span v-else-if="myValue.indexOf('--') === 0"
+              class="__input-value --variable inherit-cursor"
+              @click.self.prevent="componentClicked">{{ options.static[myValue] }}</span>
 
-        <input v-else-if="myValue.indexOf('--') === 0"
-               type="text"
-               readonly
-               v-model="options.static[myValue]"
-               class="form-control inherit-cursor js-var"
-               @click.self.prevent.stop="componentClicked"/>
+        <span v-else-if="['0', 'auto'].indexOf(myValue) >= 0"
+              class="__input-value --preset inherit-cursor"
+              @click.self.prevent="componentClicked">{{ myValue }}</span>
 
-        <input v-else type="number" class="form-control" v-model="myCustomValue" min="1" max="999" step="1"/>
+        <input v-else
+               type="number"
+               class="form-control"
+               v-model="myCustomValue"
+               min="1"
+               max="9999"
+               step="1"/>
 
         <span class="input-group-addon">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
@@ -33,7 +30,7 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li>
-                    <a href="#" @click.prevent="select('')">
+                    <a href="#" @click.prevent="select(null)">
                         default
                     </a>
                 </li>
@@ -144,7 +141,6 @@
                  * Static value: --var-sth
                  */
                 if (type === 'static') {
-                    console.log('static');
                     this.myValue = value;
                     this.myCustomValue = '';
                 }
@@ -153,7 +149,6 @@
                  * Dynamic value: px
                  */
                 if (type === 'dynamic') {
-                    console.log('dynamic');
                     this.myValue = value;
                     if (this.myCustomValue.length === 0) {
                         this.myCustomValue = '10';
@@ -164,7 +159,6 @@
                  * Preset value: 10px
                  */
                 if (type === 'preset') {
-                    console.log('preset');
                     this.myValue = value.replace(this.myCustomValue, '');
                     this.myCustomValue = value.replace(/[^0-9.]/g, '');
                 }
