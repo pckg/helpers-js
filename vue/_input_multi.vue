@@ -1,17 +1,19 @@
 <template>
-    <div class="d-input-multi input-group" :class="componentClass" @click.self.prevent="componentClicked">
+    <div class="d-input-multi input-group"
+         :class="componentClass"
+         v-outer-click="onBodyClick">
 
         <span v-if="!myValue || myValue.length === 0"
-              @click.self.prevent="componentClicked"
-              class="__input-value --default inherit-cursor color-grayish">default</span>
+              class="__input-value --default cursor-pointer color-grayish"
+              @click="toggleComponent">default</span>
 
         <span v-else-if="myValue.indexOf('--') === 0"
-              class="__input-value --variable inherit-cursor"
-              @click.self.prevent="componentClicked">{{ options.static[myValue] }}</span>
+              class="__input-value --variable cursor-pointer"
+              @click="toggleComponent">{{ options.static[myValue] }}</span>
 
         <span v-else-if="['0', 'auto'].indexOf(myValue) >= 0"
-              class="__input-value --preset inherit-cursor"
-              @click.self.prevent="componentClicked">{{ myValue }}</span>
+              class="__input-value --preset cursor-pointer"
+              @click="toggleComponent">{{ myValue }}</span>
 
         <input v-else
                type="number"
@@ -21,10 +23,9 @@
                max="9999"
                step="1"/>
 
-        <span class="input-group-addon">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-               aria-haspopup="true"
-               aria-expanded="false" title="View more options">
+        <span class="input-group-addon" :class="open ? 'open' : ''">
+            <a href="#" class="dropdown-toggle" title="View more options"
+               @click.prevent.stop="toggleComponent">
                 <span v-if="options.dynamic[myValue]">{{ options.dynamic[myValue] }}</span>
                 <i v-else class="__more-icon far fa-chevron-down"></i>
             </a>
@@ -85,7 +86,8 @@
         data: function () {
             return {
                 myValue: null,
-                myCustomValue: ''
+                myCustomValue: '',
+                open: false
             };
         },
         model: {
@@ -172,19 +174,24 @@
                 }
 
                 this.emitValue();
+                this.open = false;
             },
             emitValue: function () {
                 this.$emit('input', `${this.myCustomValue}${this.myValue}`);
             },
-            openComponent: function () {
-                $(this.$el).find('.input-group-addon').toggleClass('open');
+            toggleComponent: function () {
+                this.open = !this.open;
             },
-            componentClicked: function () {
-                if ($(this.$el).find('.open').length > 0) {
+            onBodyClick: function (e) {
+                if (!this.open) {
                     return;
                 }
 
-                this.openComponent();
+                if ($(e.target).closest(this.$el).length > 0) {
+                    return;
+                }
+
+                this.open = false;
             }
         },
         computed: {
