@@ -1,5 +1,5 @@
 <template>
-    <span class="d-input-toggle">
+    <span class="d-input-toggle" :class="myDisabled ? '--disabled' : ''">
         <i :class="iconClass" @click.prevent="toggle" :title="iconTitle"></i>
     </span>
 </template>
@@ -8,9 +8,7 @@
     export default {
         name: 'd-input-toggle',
         props: {
-            value: {
-                required: true
-            },
+            value: {},
             off: {
                 default: false
             },
@@ -44,7 +42,7 @@
                     return;
                 }
 
-                this.myValue = this.myValue == this.on ? this.off : this.on;
+                this.myValue = this.myValue === this.on ? this.off : this.on;
                 this.$emit('input', this.myValue);
             }
         },
@@ -54,10 +52,10 @@
                     return 'fas fa-toggle-off color-grayish';
                 }
 
-                return this.myValue == this.on ? 'fas fa-toggle-on clr-secondary' : 'fas fa-rotate-180 fa-toggle-on color-grayish';
+                return this.myValue === this.on ? 'fas fa-toggle-on clr-secondary' : 'fas fa-rotate-180 fa-toggle-on color-grayish';
             },
             iconTitle: function () {
-                return this.myValue == this.on ? this.on : this.off;
+                return this.myValue === this.on ? this.on : this.off;
             }
         }
     }
