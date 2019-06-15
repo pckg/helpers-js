@@ -3,9 +3,16 @@
          :class="componentClass"
          v-outer-click="onBodyClick">
 
-        <span v-if="!myValue || myValue.length === 0"
-              class="__input-value --default cursor-pointer color-grayish"
-              @click="toggleComponent">default</span>
+        <template v-if="!myValue || myValue.length === 0">
+            <span v-if="myParentValueReadable"
+                  class="__input-value --parent cursor-pointer color-grayish"
+                  @click="toggleComponent">{{ myParentValueReadable }}</span>
+
+            <span v-else
+                  class="__input-value --default cursor-pointer color-grayish-opacity"
+                  @click="toggleComponent">default</span>
+        </template>
+
 
         <span v-else-if="myValue.indexOf('--') === 0"
               class="__input-value --variable cursor-pointer"
@@ -65,6 +72,7 @@
 <script>
     export default {
         name: 'd-input-multi',
+        mixins: [pckgParentCssValue],
         props: {
             options: {
                 type: Object,
@@ -86,6 +94,7 @@
         data: function () {
             return {
                 myValue: null,
+                myParentValue: null,
                 myCustomValue: '',
                 open: false
             };
@@ -199,6 +208,21 @@
                 if (!this.myValue || this.myValue.length === 0 || this.myValue.indexOf('--') === 0) {
                     return 'cursor-pointer';
                 }
+            },
+            myParentValueReadable: function () {
+                if (!this.myParentValue) {
+                    return null;
+                }
+
+                if (this.myParentValue.indexOf('--') === 0) {
+                    return this.options.static[this.myParentValue];
+                }
+
+                if (['0', 'auto'].indexOf(this.myParentValue) >= 0) {
+                    return this.myParentValue;
+                }
+
+                return this.myParentValue;
             }
         }
     }
