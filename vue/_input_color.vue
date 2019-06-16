@@ -1,7 +1,7 @@
 <template>
     <span class="d-input-color" :class="{'active' : visible}">
         <span @click.prevent="handleClick" class="__preview" :style="{'background-color':myValue}"></span>
-        <input type="text" v-model="myValue" class="model"/>
+        <input type="text" v-model="myValue" class="model" :placeholder="myParentValue"/>
         <span class="over" :class="{'--right' : rightClass} " v-if="visible">
             <div class="as-table align-top">
                 <div>
@@ -21,6 +21,7 @@
 
 <script>
     export default {
+        mixins: [pckgParentCssValue],
         props: {
             value: {
                 default: null
@@ -46,7 +47,8 @@
             return {
                 myValue: this.value,
                 visible: false,
-                rightClass: false
+                rightClass: false,
+                myParentValue: this.parentValue
             };
         },
         methods: {

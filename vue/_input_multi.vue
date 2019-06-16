@@ -94,7 +94,7 @@
         data: function () {
             return {
                 myValue: null,
-                myParentValue: null,
+                myParentValue: this.parentValue,
                 myCustomValue: '',
                 open: false
             };

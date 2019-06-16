@@ -11,6 +11,7 @@
 <script>
     export default {
         name: 'd-select-pills',
+        mixins: [pckgParentCssValue],
         props: {
             options: {
                 type: Object,
@@ -36,7 +37,8 @@
                 myOptions: this.options,
                 myMultiple: this.multiple,
                 myValue: this.value,
-                myCustomValue: ''
+                myCustomValue: '',
+                myParentValue: this.parentValue,
             };
         },
         watch: {
@@ -74,7 +76,11 @@
                     return this.myValue.indexOf(value) >= 0 ? 'active' : null;
                 }
 
-                return this.myValue == value ? 'active' : null;
+                return this.myValue == value
+                    ? 'active'
+                    : (this.myParentValue == value
+                        ? 'previous-scope'
+                        : null);
             }
         }
     }
