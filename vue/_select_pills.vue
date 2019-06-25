@@ -11,7 +11,18 @@
 <script>
     export default {
         name: 'd-select-pills',
-        mixins: [pckgParentCssValue],
+        mixins: [{
+            props: {
+                parentValue: {
+                    default: null
+                },
+            },
+            watch: {
+                parentValue: function (value) {
+                    this.myParentValue = value;
+                }
+            }
+        }],
         props: {
             options: {
                 type: Object,

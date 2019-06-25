@@ -21,7 +21,18 @@
 
 <script>
     export default {
-        mixins: [pckgParentCssValue],
+        mixins: [{
+            props: {
+                parentValue: {
+                    default: null
+                },
+            },
+            watch: {
+                parentValue: function (value) {
+                    this.myParentValue = value;
+                }
+            }
+        }],
         props: {
             value: {
                 default: null
