@@ -1,21 +1,23 @@
 export class Record {
 
     constructor(data, relations) {
-        this.copyData(data || {});
-        this.copyRelations(relations || {});
+        this.$data = data || {};
+        this.$relations = relations || {};
+        // this.copyData(data || {});
+        //this.copyRelations(relations || {});
         this.$entity = Entity;
         let object = this;
         this.$fetches = {};
 
         return new Proxy(this, {
-            set: (object, key, value, proxy) => {
-                return object.__set(key, value);
-            },
+            /*set: (object, key, value, proxy) => {
+                return object.__set.call(object, key, value);
+            },*/
             get: (object, key) => {
-                return object.__get(key);
+                return object.__get.call(object, key);
             },
             apply: (target, params) => {
-                return object.__apply(params, target);
+                return object.__apply.call(object, params, target);
             },
             ownKeys: () => {
                 return object.ownKeys();
@@ -23,7 +25,7 @@ export class Record {
         });
     }
 
-    copyData(data) {
+    /*copyData(data) {
         $.each(data, function (key, val) {
             this[key] = val;
         }.bind(this));
@@ -33,7 +35,7 @@ export class Record {
         $.each(relations, function (key, val) {
             this[key] = val;
         }.bind(this));
-    }
+    }*/
 
     __set(key, value) {
         if (key.indexOf('$') === 0) {
@@ -51,15 +53,15 @@ export class Record {
         }
 
         if (this.hasOwnProperty('get' + utils.ucfirst(key) + 'Attribute')) {
-            return this['get' + utils.ucfirst(key) + 'Attribute']();
+            return this['get' + utils.ucfirst(key) + 'Attribute'].call(this);
         }
 
         if (this['get' + utils.ucfirst(key) + 'Relation']) {
-            return this['get' + utils.ucfirst(key) + 'Relation']();
+            return this['get' + utils.ucfirst(key) + 'Relation'].call(this);
         }
 
-        if (this.hasOwnProperty(key)) {
-            return this[key];
+        if (this.$data.hasOwnProperty(key)) {
+            return this.$data[key];
         }
 
         return this[key];

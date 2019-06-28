@@ -9,7 +9,7 @@
                 <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="add(2)">2</button>
             </div>
             <div>
-                <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="add(3)">2</button>
+                <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="add(3)">3</button>
             </div>
         </div>
 
@@ -47,7 +47,8 @@
                 <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="add(0)">0</button>
             </div>
             <div>
-                <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="remove">Delete
+                <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="remove">
+                    <i class="fa fa-fw fa-backspace"></i>
                 </button>
             </div>
         </div>
