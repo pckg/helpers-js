@@ -1,9 +1,12 @@
 <template>
     <span class="d-input-radio" :class="disabled ? 'disabled' : ''">
-        <input type="radio" :name="name" :id="id" :value="value" :disabled="disabled"/>
+        <!--<input type="radio" :name="name" :id="id" :value="value" :disabled="disabled"/>-->
         <i @click.prevent="setValue"
+           class="__radio-icon"
            :class="cModel == value ? 'fas fa-dot-circle' : 'far fa-circle'"></i>
-        <label v-if="label && label.length > 0" @click.prevent="setValue">{{ label }}</label>
+        <label v-if="label && label.length > 0"
+               class="__radio-label"
+               @click.prevent="setValue">{{ label }}</label>
     </span>
 </template>
 

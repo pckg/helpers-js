@@ -1,8 +1,10 @@
 <template>
     <span class="d-input-checkbox" :class="disabled ? 'is-disabled' : ''">
-        <input type="checkbox" :name="name" :id="id" :value="value" :disabled="disabled" v-show="false"/>
-        <i @click.prevent="toggleValue" :class="iconClass"></i>
-        <label @click="toggleValue"><slot></slot></label>
+        <i class="__checkbox-icon"
+           @click.prevent="toggleValue"
+           :class="iconClass"></i>
+        <label class="__checkbox-label"
+               @click="toggleValue"><slot></slot></label>
     </span>
 </template>
 
