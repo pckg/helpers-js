@@ -50,16 +50,16 @@
                         {{ option }}
                     </a>
                 </li>
-                <li role="separator" class="divider" v-if="Object.keys(options.dynamic || {}).length > 0"></li>
-                <li v-for="(option, v) in options.dynamic || {}" :class="c === myValue ? 'is-active' : ''"
-                    @click.prevent="select(v, 'dynamic')">
+                <li role="separator" class="divider" v-if="Object.keys(options.static || {}).length > 0"></li>
+                <li v-for="(option, c) in options.static || {}" :class="c === myValue ? 'is-active' : ''"
+                    @click.prevent="select(c, 'static')">
                     <a href="#" @click.prevent>
                         {{ option }}
                     </a>
                 </li>
-                <li role="separator" class="divider" v-if="Object.keys(options.static || {}).length > 0"></li>
-                <li v-for="(option, c) in options.static || {}" :class="c === myValue ? 'is-active' : ''"
-                    @click.prevent="select(c, 'static')">
+                <li role="separator" class="divider" v-if="Object.keys(options.dynamic || {}).length > 0"></li>
+                <li v-for="(option, v) in options.dynamic || {}" :class="c === myValue ? 'is-active' : ''"
+                    @click.prevent="select(v, 'dynamic')">
                     <a href="#" @click.prevent>
                         {{ option }}
                     </a>

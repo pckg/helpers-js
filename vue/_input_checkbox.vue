@@ -1,10 +1,11 @@
 <template>
     <span class="d-input-checkbox" :class="disabled ? 'is-disabled' : ''">
-        <i class="__checkbox-icon"
-           @click.prevent="toggleValue"
-           :class="iconClass"></i>
         <label class="__checkbox-label"
-               @click="toggleValue"><slot></slot></label>
+               @click="toggleValue">
+            <i class="__checkbox-icon fa-fw"
+               :class="iconClass"></i>
+                <slot></slot>
+        </label>
     </span>
 </template>
 
@@ -18,7 +19,23 @@
             id: {},
             disabled: {},
             name: {},
-            selected: {}
+            selected: {},
+            options: {
+                default: function () {
+                    return {
+                        classes: {
+                            multiple: {
+                                active: 'fas fa-check-square',
+                                inactive: 'fal fa-square'
+                            },
+                            single: {
+                                active: 'fas fa-check-square',
+                                inactive: 'fal fa-square'
+                            }
+                        }
+                    };
+                }
+            }
         },
         model: {
             prop: 'selected'
@@ -54,12 +71,13 @@
             }
         },
         computed: {
-            iconClass: function(){
+            iconClass: function () {
+                let c = this.options.classes;
                 if (Array.isArray(this.cModel)) {
-                    return this.cModel.indexOf(this.value) >= 0 ? 'fas fa-check-square' : 'fal fa-square';
+                    return this.cModel.indexOf(this.value) >= 0 ? c.multiple.active : c.multiple.inactive;
                 }
 
-                return this.cModel == this.value ? 'fas fa-check-square' : 'fal fa-square';
+                return this.cModel == this.value ? c.single.active : c.single.inactive;
             }
         }
     }
