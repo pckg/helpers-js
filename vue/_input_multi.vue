@@ -23,12 +23,9 @@
               @click="toggleComponent">{{ myValue }}</span>
 
         <input v-else
-               type="number"
+               type="text"
                class="form-control"
-               v-model="myCustomValue"
-               min="1"
-               max="9999"
-               step="1"/>
+               v-model="myCustomValue"/>
 
         <span class="input-group-addon" :class="open ? 'open' : ''">
             <a href="#" class="dropdown-toggle" title="View more options"
