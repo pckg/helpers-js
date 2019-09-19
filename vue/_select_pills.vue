@@ -2,7 +2,7 @@
     <div class="d-select-pills">
         <span v-for="(option, key) in options" class="pill" :class="getOptionClass(key)"
               @click.prevent="selectOption(key)">
-            <i v-if="icon" class="fa fa-fw" :class="'fa+' + option.icon" :title="option.title"></i>
+            <i v-if="icon" class="fal fa-fw" :class="'fa+' + option.icon" :title="option.title"></i>
             <template v-else>{{ option }}</template>
         </span>
     </div>

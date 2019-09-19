@@ -49,10 +49,10 @@
         computed: {
             iconClass: function () {
                 if (this.myDisabled) {
-                    return 'fas fa-toggle-off color-grayish';
+                    return 'fal fa-toggle-off color-grayish';
                 }
 
-                return this.myValue === this.on ? 'fas fa-toggle-on clr-secondary' : 'fas fa-rotate-180 fa-toggle-on color-grayish';
+                return this.myValue === this.on ? 'fal fa-toggle-on clr-secondary' : 'fal fa-rotate-180 fa-toggle-on color-grayish';
             },
             iconTitle: function () {
                 return this.myValue === this.on ? this.on : this.off;

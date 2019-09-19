@@ -48,7 +48,7 @@
             </div>
             <div>
                 <button type="button" class="btn btn-default btn-lg btn-block" @click.prevent="remove">
-                    <i class="fa fa-fw fa-backspace"></i>
+                    <i class="fal fa-fw fa-backspace"></i>
                 </button>
             </div>
         </div>
