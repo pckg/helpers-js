@@ -68,21 +68,24 @@
         },
         methods: {
             selectOption: function (value) {
-                if (this.myMultiple && this.myValue.indexOf(value) === -1) {
-                    this.myValue.push(value);
-                    this.$emit('selected', value);
-                } else if (!this.myMultiple) {
-                    if (this.myValue == value && !this.required) {
-                        this.myValue = null;
+                if (this.myMultiple) {
+                    if (this.myValue.indexOf(value) === -1) {
+                        this.myValue.push(value);
+                        this.$emit('selected', value);
+                    } else {
+                        utils.splice(this.myValue, value);
                         this.$emit('deselected', value);
+                    }
+                } else {
+                    if (this.myValue == value) {
+                        if (!this.required) {
+                            this.myValue = null;
+                            this.$emit('deselected', value);
+                        }
                     } else {
                         this.myValue = value;
                         this.$emit('selected', value);
                     }
-                } else if (!this.required) {
-                    let v = this.myValue;
-                    this.myValue = null;
-                    this.$emit('deselected', v);
                 }
 
                 this.$emit('input', this.myValue);
