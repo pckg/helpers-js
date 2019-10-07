@@ -52,6 +52,7 @@
                     return 'fal fa-toggle-off color-grayish';
                 }
 
+                return this.myValue === this.on ? 'fal fa-toggle-on clr-secondary' : 'fal fa-toggle-off color-grayish';
                 return this.myValue === this.on ? 'fal fa-toggle-on clr-secondary' : 'fal fa-rotate-180 fa-toggle-on color-grayish';
             },
             iconTitle: function () {
