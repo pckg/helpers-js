@@ -23,8 +23,8 @@
 
                 offsetObjects[offset].push($(this));
 
-                if ($(this).height() > minHeight[offset]) {
-                    minHeight[offset] = $(this).height();
+                if ($(this).innerHeight() > minHeight[offset]) {
+                    minHeight[offset] = $(this).innerHeight();
                 }
             });
 
