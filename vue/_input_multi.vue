@@ -1,26 +1,22 @@
 <template>
     <div class="d-input-multi input-group"
          :class="componentClass"
+         @click="toggleComponent"
          v-outer-click="onBodyClick">
 
         <template v-if="!myValue || myValue.length === 0">
             <span v-if="myParentValueReadable"
-                  class="__input-value --parent cursor-pointer color-grayish"
-                  @click="toggleComponent">{{ myParentValueReadable }}</span>
+                  class="__input-value --parent cursor-pointer color-grayish">{{ myParentValueReadable }}</span>
 
             <span v-else
-                  class="__input-value --default cursor-pointer color-grayish-opacity"
-                  @click="toggleComponent">default</span>
+                  class="__input-value --default cursor-pointer color-grayish-opacity">default</span>
         </template>
 
-
         <span v-else-if="myValue.indexOf('--') === 0"
-              class="__input-value --variable cursor-pointer"
-              @click="toggleComponent">{{ options.static[myValue] }}</span>
+              class="__input-value --variable cursor-pointer">{{ options.static[myValue] }}</span>
 
         <span v-else-if="['0', 'auto'].indexOf(myValue) >= 0"
-              class="__input-value --preset cursor-pointer"
-              @click="toggleComponent">{{ myValue }}</span>
+              class="__input-value --preset cursor-pointer">{{ myValue }}</span>
 
         <input v-else
                type="text"
@@ -35,28 +31,28 @@
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li>
-                    <a href="#" @click.prevent="select(null)">
+                    <a href="#" @click.prevent.stop="select(null)">
                         default
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.preset || {}).length > 0"></li>
                 <li v-for="(option, c) in options.preset || {}"
                     :class="c === `${myCustomValue}${myValue}` ? 'is-active' : ''"
-                    @click.prevent="select(c, 'preset')">
+                    @click.prevent.stop="select(c, 'preset')">
                     <a href="#" @click.prevent>
                         {{ option }}
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.static || {}).length > 0"></li>
                 <li v-for="(option, c) in options.static || {}" :class="c === myValue ? 'is-active' : ''"
-                    @click.prevent="select(c, 'static')">
+                    @click.prevent.stop="select(c, 'static')">
                     <a href="#" @click.prevent>
                         {{ option }}
                     </a>
                 </li>
                 <li role="separator" class="divider" v-if="Object.keys(options.dynamic || {}).length > 0"></li>
                 <li v-for="(option, v) in options.dynamic || {}" :class="c === myValue ? 'is-active' : ''"
-                    @click.prevent="select(v, 'dynamic')">
+                    @click.prevent.stop="select(v, 'dynamic')">
                     <a href="#" @click.prevent>
                         {{ option }}
                     </a>
@@ -196,7 +192,10 @@
             emitValue: function () {
                 this.$emit('input', `${this.myCustomValue}${this.myValue}`);
             },
-            toggleComponent: function () {
+            toggleComponent: function (e) {
+                if (e.target.tagName === 'INPUT') {
+                    return;
+                }
                 this.open = !this.open;
             },
             onBodyClick: function (e) {
