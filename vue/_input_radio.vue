@@ -6,7 +6,7 @@
            :class="cModel == value ? 'fal fa-dot-circle' : 'fal fa-circle'"></i>
         <label v-if="label && label.length > 0"
                class="__radio-label"
-               @click.prevent="setValue">{{ label }}</label>
+               @click.prevent="setValue">{{ label }}<slot></slot></label>
     </span>
 </template>
 
