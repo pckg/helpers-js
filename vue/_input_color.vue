@@ -20,7 +20,13 @@
 </template>
 
 <script>
+
+    import ColorPicker from 'vue-color-picker-wheel';
+
     export default {
+        components: {
+            ColorPicker
+        },
         mixins: [{
             props: {
                 parentValue: {
