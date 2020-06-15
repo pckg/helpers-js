@@ -128,10 +128,17 @@
                 this.emitValue();
             },
             value: {
-                immediate: true, handler: function (newVal) {
-                    if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
+                immediate: true,
+                handler: function (newVal) {
+                    if ([0, '0', '00'].indexOf(newVal) >= 0) {
+                        this.myValue = 0;
                         this.myCustomValue = '';
+                        return;
+                    }
+
+                    if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
                         this.myValue = newVal;
+                        this.myCustomValue = '';
                         return;
                     }
 
