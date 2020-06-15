@@ -59,6 +59,20 @@
                 </li>
             </ul>
         </span>
+
+        <template v-if="slider">
+            <span class="__slider">
+                <input type="range"
+                       :min="slider.min"
+                       :max="slider.max"
+                       v-model="myCustomValue"
+                       :disabled="['px','deg','%'].indexOf(myValue) === -1" />
+            </span>
+            <span class="__remove">
+                <a href="#" @click.prevent="$emit('remove')"><i class="fal fa-fw fa-trash"></i></a>
+            </span>
+        </template>
+
     </div>
 </template>
 
@@ -87,6 +101,9 @@
                         static: {},
                     };
                 }
+            },
+            slider: {
+                default: false
             },
             value: {
                 default: ''
@@ -212,9 +229,16 @@
         },
         computed: {
             componentClass: function () {
+                let c = [];
                 if (!this.myValue || this.myValue.length === 0 || this.myValue.indexOf('--') === 0) {
-                    return 'cursor-pointer';
+                    c.push('cursor-pointer');
                 }
+
+                if (this.slider) {
+                    c.push('--has-slider');
+                }
+
+                return c;
             },
             myParentValueReadable: function () {
                 if (!this.myParentValue) {

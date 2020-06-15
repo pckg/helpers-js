@@ -50,11 +50,15 @@
             }
         },
         watch: {
-            value: function (value) {
+            value: function (value, oldValue) {
                 this.myValue = value;
             },
-            myValue: function (value) {
-                this.$emit('input', value);
+            myValue: function (value, oldValue) {
+                if (value === oldValue) {
+                    return;
+                }
+
+                this.emit();
             },
         },
         model: {
@@ -63,6 +67,7 @@
         data: function () {
             return {
                 myValue: this.value,
+                myPickerValue: this.value,
                 visible: false,
                 rightClass: false,
                 myParentValue: this.parentValue
@@ -89,6 +94,9 @@
             },
             selectColor: function (color) {
                 this.myValue = color;
+            },
+            emit: function () {
+                this.$emit('input', this.myValue);
             }
         },
         mounted: function () {
