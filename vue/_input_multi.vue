@@ -4,7 +4,7 @@
          @click="toggleComponent"
          v-outer-click="onBodyClick">
 
-        <template v-if="!myValue || myValue.length === 0">
+        <template v-if="!nounit && (!myValue || myValue.length === 0)">
             <span v-if="myParentValueReadable"
                   class="__input-value --parent cursor-pointer color-grayish">{{ myParentValueReadable }}</span>
 
@@ -12,7 +12,7 @@
                   class="__input-value --default cursor-pointer color-grayish-opacity">default</span>
         </template>
 
-        <span v-else-if="myValue.indexOf('--') === 0"
+        <span v-else-if="myValue && myValue.indexOf('--') === 0"
               class="__input-value --variable cursor-pointer">{{ options.static[myValue] }}</span>
 
         <span v-else-if="['0', 'auto'].indexOf(myValue) >= 0"
@@ -26,7 +26,7 @@
         <span class="input-group-addon" :class="open ? 'open' : ''">
             <a href="#" class="dropdown-toggle" title="View more options"
                @click.prevent.stop="toggleComponent">
-                <span v-if="options.dynamic[myValue]">{{ options.dynamic[myValue] }}</span>
+                <span v-if="options.dynamic && options.dynamic[myValue]">{{ options.dynamic[myValue] }}</span>
                 <i v-else class="__more-icon far fa-chevron-down"></i>
             </a>
             <ul class="dropdown-menu dropdown-menu-right">
@@ -65,8 +65,9 @@
                 <input type="range"
                        :min="slider.min"
                        :max="slider.max"
+                       :step="slider.step || 1"
                        v-model="myCustomValue"
-                       :disabled="['px','deg','%'].indexOf(myValue) === -1" />
+                       :disabled="!nounit && ['px','deg','%'].indexOf(myValue) === -1"/>
             </span>
             <span class="__remove">
                 <a href="#" @click.prevent="$emit('remove')"><i class="fal fa-fw fa-trash"></i></a>
@@ -130,20 +131,26 @@
             value: {
                 immediate: true,
                 handler: function (newVal) {
+                    if (!utils.is(newVal)) {
+                        this.myValue = '';
+                        this.myCustomValue = '';
+                        return;
+                    }
+
                     if ([0, '0', '00'].indexOf(newVal) >= 0) {
                         this.myValue = 0;
                         this.myCustomValue = '';
                         return;
                     }
 
-                    if (!newVal || newVal.length === 0 || newVal.indexOf('--') === 0) {
+                    if (newVal.indexOf('--') === 0) {
                         this.myValue = newVal;
                         this.myCustomValue = '';
                         return;
                     }
 
                     let found = false;
-                    $.each(this.options.dynamic, function (key, title) {
+                    $.each(this.options.dynamic || {}, function (key, title) {
                         if (newVal.indexOf(key) > 0) {
                             this.myValue = key;
                             this.myCustomValue = newVal.substring(0, newVal.indexOf(key));
@@ -156,7 +163,7 @@
                         return;
                     }
 
-                    $.each(this.options.preset, function (key, title) { // 0, 10px
+                    $.each(this.options.preset || {}, function (key, title) { // 0, 10px
                         if (newVal === key) {
                             if (['0', 'auto'].indexOf(key) >= 0) {
                                 this.myValue = key;
@@ -168,10 +175,13 @@
                             return false;
                         }
                     }.bind(this));
+
+                    if (found) {
+                        return;
+                    }
+                    this.myValue = '';
+                    this.myCustomValue = newVal;
                 },
-                myCustomValue: function (newVal) {
-                    this.emitValue();
-                }
             }
         },
         methods: {
@@ -214,7 +224,14 @@
                 this.open = false;
             },
             emitValue: function () {
-                this.$emit('input', `${this.myCustomValue}${this.myValue}`);
+                let vals = [];
+                if (utils.is(this.myCustomValue)) {
+                    vals.push(this.myCustomValue);
+                }
+                if (utils.is(this.myValue)) {
+                    vals.push(this.myValue);
+                }
+                this.$emit('input', vals.join('') || '');
             },
             toggleComponent: function (e) {
                 if (e.target.tagName === 'INPUT') {
@@ -261,6 +278,9 @@
                 }
 
                 return this.myParentValue;
+            },
+            nounit: function () {
+                return !this.options.static && !this.options.dynamic && !this.options.preset;
             }
         }
     }
