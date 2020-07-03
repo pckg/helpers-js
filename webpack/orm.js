@@ -1,27 +1,27 @@
 export class Record {
 
     constructor(data, relations) {
+        let object = this;
         this.$data = data || {};
         this.$relations = relations || {};
         // this.copyData(data || {});
         //this.copyRelations(relations || {});
         this.$entity = Entity;
-        let object = this;
         this.$fetches = {};
+        this.$unique = ['id'];
 
-        return new Proxy(this, {
-            /*set: (object, key, value, proxy) => {
-                return object.__set.call(object, key, value);
-            },*/
-            get: (object, key) => {
-                return object.__get.call(object, key);
-            },
-            apply: (target, params) => {
-                return object.__apply.call(object, params, target);
-            },
-            ownKeys: () => {
-                return object.ownKeys();
-            }
+        /**
+         * Set getters for data.
+         */
+        Object.keys(this.$data).forEach((key) => {
+            Object.defineProperty(this, key, {
+                get: () => {
+                    return this.$data[key];
+                },
+                set: (value) => {
+                    return this.$data[key] = value;
+                },
+            });
         });
     }
 
@@ -38,12 +38,27 @@ export class Record {
     }*/
 
     __set(key, value) {
-        if (key.indexOf('$') === 0) {
+        if (typeof key !== 'string' || key.indexOf('_') === 0 || key.indexOf('$') === 0) {
             this[key] = value;
-            return true;
+            return;
         }
 
-        this.$data[key] = value;
+        if (this.hasOwnProperty('set' + utils.ucfirst(key) + 'Attribute') || typeof this['set' + utils.ucfirst(key) + 'Attribute'] !== 'undefined') {
+            this['set' + utils.ucfirst(key) + 'Attribute'].call(this, value);
+            return this;
+        }
+
+        if (this['set' + utils.ucfirst(key) + 'Relation']) {
+            this['set' + utils.ucfirst(key) + 'Relation'].call(this, value);
+            return this;
+        }
+
+        if (this.$data.hasOwnProperty(key)) {
+            this.$data[key] = value;
+            return this;
+        }
+
+        this[key] = value;
         return this;
     }
 
@@ -52,7 +67,7 @@ export class Record {
             return this[key];
         }
 
-        if (this.hasOwnProperty('get' + utils.ucfirst(key) + 'Attribute')) {
+        if (this.__proto__.hasOwnProperty('get' + utils.ucfirst(key) + 'Attribute')) {
             return this['get' + utils.ucfirst(key) + 'Attribute'].call(this);
         }
 
@@ -191,29 +206,67 @@ export class Record {
     }
 
     update() {
-        let entity = this.getEntity();
-        let repository = entity.getRepository();
-        let data = this.$data;
+        return new Promise((resolve, reject) => {
 
-        if (!data.id) {
-            return;
-        }
+            let entity = this.getEntity();
+            let repository = entity.getRepository();
+            let data = this.$data;
 
-        let finalPath = entity.getApiPath();
+            if (!data.id) {
+                return reject();
+            }
 
-        if (!finalPath) {
-            return;
-        }
+            let finalPath = entity.getApiPath();
 
-        finalPath += '/' + data.id;
+            if (!finalPath) {
+                return reject();
+            }
 
-        return repository.post(finalPath, this.$data);
+            finalPath += '/' + data.id;
+
+            return repository.post(finalPath, this.$data);
+        });
+    }
+
+    applyUniqueCondition(entity) {
+        this.$unique.forEach((field) => {
+            entity.where(field, this[field]);
+        })
     }
 
     insert() {
+        return this.getEntity().query(this.$path + ':delete');
     }
 
     delete() {
+        let entity = this.getEntity();
+
+        this.applyUniqueCondition(entity);
+
+        return entity.query(this.$path + ':delete');
+    }
+
+    update() {
+        let entity = this.getEntity();
+
+        this.applyUniqueCondition(entity);
+
+        return entity.query(this.$path + ':update', this.$data);
+    }
+
+    clone(data) {
+        data = data || {};
+        let clone = JSON.parse(JSON.stringify(this.$data));
+
+        Object.keys(data).forEach((key) => {
+            clone[key] = data[key];
+        });
+
+        return new this.constructor(clone);
+    }
+
+    static staticClone(data) {
+
     }
 
     static get() {
@@ -221,6 +274,11 @@ export class Record {
 
     get() {
         return this.$data;
+    }
+
+    set(key, value) {
+        $vue.$set(this.$data, key, value);
+        return this;
     }
 
 }
@@ -272,6 +330,17 @@ export class Query {
     }
 
     where(key, val = true, comparator = '=') {
+        if (Array.isArray(key)) {
+            key.map((key, val) => {
+                return this.where(key, val, comparator)
+            })
+            return;
+        } else if (typeof key === 'object') {
+            $.each(key, (i, v) => {
+                this.where(i, v, comparator);
+            });
+            return;
+        }
         this.$children.push({
             k: key,
             v: val,
@@ -508,6 +577,25 @@ export class Entity {
         }.bind(this));
     }
 
+    query(action, data) {
+        return new Promise((resolve, reject) => {
+            let q = (new HttpRepository()).getQueryHeaders(this.getQuery());
+            $.ajax({
+                url: '/api/ql',
+                dataType: 'JSON',
+                type: 'POST',
+                headers: Object.assign(q, {
+                    "X-Pckg-Locale": Pckg?.config?.locale?.current
+                }),
+                data: {
+                    action: action,
+                    data: data,
+                    query: q
+                }
+            }).done(resolve);
+        });
+    }
+
 }
 
 export class Collection {
@@ -525,7 +613,6 @@ export class Collection {
 export class Repository {
 
     constructor(repository) {
-        console.log('Repository repository', repository);
         this.$repository = HttpRepository;
         this.$repositoryObject = repository || null;
     }
