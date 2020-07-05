@@ -525,7 +525,6 @@ export class Collection {
 export class Repository {
 
     constructor(repository) {
-        console.log('Repository repository', repository);
         this.$repository = HttpRepository;
         this.$repositoryObject = repository || null;
     }

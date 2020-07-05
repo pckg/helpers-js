@@ -79,7 +79,6 @@
         },
         methods: {
             setValue: function (value) {
-                console.log('set value', value);
                 this.myValue = value;
                 this.emitValue();
             },

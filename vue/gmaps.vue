@@ -30,19 +30,16 @@
             'afterDrag': {
                 type: Function,
                 default: function () {
-                    console.log('default after drag, no action');
                 }
             },
             'afterDraw': {
                 type: Function,
                 default: function () {
-                    console.log('default after draw, no action');
                 }
             },
             'afterZoom': {
                 type: Function,
                 default: function () {
-                    console.log('default after zoom, no action');
                 }
             },
             'zoom': {
@@ -113,10 +110,8 @@
                     google.maps.event.removeListener(listener);
 
                     /*if (typeof this.$parent.onGmapsIdle == 'function' && this.$parent.onGmapsIdle(this._gmap)) {
-                     console.log("everything is set");
                      // do nothing, everything was set
                      } else if (this.pins.length == 1 || this._gmap.getZoom() > this.zoom) {
-                     console.log("pins!");
                      if (this.pins.length > 0) {
                      this._gmap.setZoom(this.zoom);
                      this._gmap.setCenter(this.pins[0].position);
@@ -124,7 +119,6 @@
                      this.fitToDefault();
                      }
                      } else {
-                     console.log("fitting");
                      this.fitBounds();
                      }*/
                     this._gmap.setOptions({minZoom: 5/*, maxZoom: 15*/});
@@ -144,7 +138,6 @@
             },
 
             fitForNoMarkers: function () {
-                console.log("fitting for no markers", this.center);
                 var center = this.center.split(';');
                 var zoom = 7;
                 var centerLatLng = new google.maps.LatLng(center[0], center[1]);
@@ -160,7 +153,6 @@
             },
 
             fitForOneMarker: function () {
-                console.log("fitting for one marker", this.locations[0].geo);
                 var center = this.locations[0].geo;
                 var zoom = 13;
                 var centerLatLng = new google.maps.LatLng(center[0], center[1]);
@@ -197,12 +189,9 @@
             },
 
             fitToDefault: function () {
-                console.log("fit to default");
                 var latLngBounds = new google.maps.LatLngBounds();
                 var center = this.center.split(';');
-                console.log(center);
                 latLngBounds.extend(new google.maps.LatLng(center[0], center[1]));
-                console.log("fitting to bounds", latLngBounds);
                 this._gmap.fitBounds(latLngBounds);
                 google.maps.event.trigger(this._gmap, 'resize');
             },
@@ -294,7 +283,6 @@
                                 ? 'key=' + Pckg.config.apis.googleConsole + '&'
                                 : '')
                             + 'address=' + this.search).success(function (data) {
-                            console.log('results', data);
                             if (typeof data.results != 'undefined' && data.results.length > 0) {
                                 var location;
 
