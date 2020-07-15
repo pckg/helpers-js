@@ -739,7 +739,7 @@ export class HttpQLRepository extends HttpRepository {
 
     makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
-            let options = {type: 'SEARCH'};
+            let options = {type: 'SEARCH', beforeSend: http.addCsrf};
             let queryData = this.getQueryHeaders(query);
 
             let length = JSON.stringify(queryData).length;
@@ -759,7 +759,7 @@ export class HttpQLRepository extends HttpRepository {
 
     makeSearchRequest(path, query) {
         return (new Promise(function (resolve, reject) {
-            let options = {type: 'SEARCH'};
+            let options = {type: 'SEARCH', beforeSend: http.addCsrf};
             let queryData = this.getQueryHeaders(query);
 
             let length = JSON.stringify(queryData).length;
