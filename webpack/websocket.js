@@ -9,7 +9,7 @@ export class Websocket {
         this.connection = null;
         this.session = null;
         this.onopen = null;
-        this.connect(hostname, port, args);
+        this.connect(hostname || window.location.hostname, port || 444, args);
     }
 
     getConnection() {
@@ -48,7 +48,7 @@ export class Websocket {
         }.bind(this);
     }
 
-    onOpen(callable) {
+    onOpen(callback) {
         this.onopen = callback;
         return this;
     }
