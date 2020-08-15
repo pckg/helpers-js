@@ -737,6 +737,10 @@ export class HttpQLRepository extends HttpRepository {
         return this.makeSearchRequest(path, query);
     }
 
+    one(path, query) {
+        return this.makeSearchRequest(path, query);
+    }
+
     makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
             let options = {type: 'SEARCH', beforeSend: http.addCsrf};
