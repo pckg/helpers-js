@@ -58,6 +58,11 @@ export class Websocket {
         return this;
     }
 
+    close() {
+        this.connection.close();
+        return this;
+    }
+
     subscribe(channel, e, callback) {
         console.log('Subscribing to channel ' + channel + ' with event ' + e);
         this.session.subscribe(channel, function (args) {
@@ -66,6 +71,7 @@ export class Websocket {
                 console.log('no arg', args);
                 return;
             }
+            arg = JSON.parse(arg);
             let event = arg.event || null;
             if (!event) {
                 console.log('NO EVENT', arg);
@@ -78,7 +84,7 @@ export class Websocket {
              * Call callback.
              */
             console.log('EVENT: ' + e, arg);
-            callback(arg);
+            callback(arg.data || null);
         });
     }
 
