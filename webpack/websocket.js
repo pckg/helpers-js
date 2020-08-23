@@ -1,8 +1,8 @@
-
 /**
  * Basic implementation for SECURE websocket communication.
  */
 import ab from "autobahn";
+
 export class Websocket {
 
     constructor(hostname, port, args) {
@@ -26,9 +26,9 @@ export class Websocket {
             realm: 'realm1',
             onchallenge: function (session, method, extra) {
                 if (method === "wampcra") {
-                    var keyToUse = 'secret1';
+                    var keyToUse = args.authSecret;
                     if (typeof extra.salt !== 'undefined') {
-                        keyToUse = ab.auth_cra.derive_key(keyToUse, extra.salt);
+                        keyToUse = ab.auth_cra.derive_key(args.authSecret, extra.salt);
                     }
 
                     return ab.auth_cra.sign(keyToUse, extra.challenge);
@@ -36,8 +36,8 @@ export class Websocket {
                     throw "don't know how to authenticate using '" + method + "'";
                 }
             },
-            authmethods: ['wampcra'],
-            authid: 'peter'
+            authmethods: [args.authMethod],
+            authid: args.authId
         });
 
         this.connection.onopen = function (session) {
