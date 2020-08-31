@@ -25,11 +25,11 @@
                     return {
                         classes: {
                             multiple: {
-                                active: 'fal fa-check-square',
+                                active: 'fas fa-check-square',
                                 inactive: 'fal fa-square'
                             },
                             single: {
-                                active: 'fal fa-check-square',
+                                active: 'fas fa-check-square',
                                 inactive: 'fal fa-square'
                             }
                         }
