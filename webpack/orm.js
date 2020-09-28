@@ -456,6 +456,11 @@ export class Entity {
         return this.$repositoryObject;
     }
 
+    setRepository(repository) {
+        this.$repository = repository.constructor.name;
+        this.$repositoryObject = repository;
+    }
+
     getApiPath(path) {
         // path: null -> /api/users
         // path: null -> /api/users
@@ -652,7 +657,8 @@ export class Repository {
  */
 export class HttpRepository {
 
-    constructor(endpoint = '/api') {
+    constructor(endpoint = '/api', host = '') {
+        this.$host = host;
         this.$endpoint = endpoint;
     }
 
@@ -660,6 +666,10 @@ export class HttpRepository {
         this.$endpoint = endpoint;
 
         return this;
+    }
+
+    get fullUrl() {
+        return this.$host + this.$endpoint;
     }
 
     getQueryHeaders(query) {
@@ -684,7 +694,7 @@ export class HttpRepository {
 
     makeGetRequest(path, query) {
         return (new Promise(function (resolve, reject) {
-            http.get((this.$endpoint || '') + path, function (data) {
+            http.get(this.fullUrl + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
@@ -714,7 +724,7 @@ export class HttpRepository {
     post(path, params) {
         return new Promise(function (resolve, reject) {
             // make post request
-            http.post((this.$endpoint || '') + path, params, function (data) {
+            http.post(this.fullUrl + path, params, function (data) {
                 // this is what api returns
                 let dataObject = {id: 3, title: 'Three'};
 
@@ -750,7 +760,7 @@ export class HttpQLRepository extends HttpRepository {
             options[true || length > 6144 ? 'data' : 'headers'] = queryData;
 
             // make http get request
-            http.get((this.$endpoint || '') + '?path=' + path, function (data) {
+            http.get(this.fullUrl + '?path=' + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
@@ -770,7 +780,7 @@ export class HttpQLRepository extends HttpRepository {
             options[true || length > 6144 ? 'data' : 'headers'] = queryData;
 
             // make http get request
-            http.get((this.$endpoint || '') + '?path=' + path, function (data) {
+            http.get(this.fullUrl + '?path=' + path, function (data) {
                 // return array
                 resolve(data);
             }, function (data) {
