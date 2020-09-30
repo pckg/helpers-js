@@ -8,14 +8,9 @@
             {{ value }}
         </a>
         <ul class="dropdown-menu" role="menu">
-            <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="#" @click.prevent="selectLocale('en_gb')">EN</a>
-            </li>
-            <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="#" @click.prevent="selectLocale('hr_hr')">HR</a>
-            </li>
-            <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="#" @click.prevent="selectLocale('sl_si')">SI</a>
+            <li role="presentation" v-for="language in languages">
+                <a role="menuitem" tabindex="-1" href="#"
+                   @click.prevent="selectLocale(language.locale)">{{ language.title }}</a>
             </li>
         </ul>
     </div>
@@ -23,17 +18,19 @@
 </template>
 
 <script>
-    export default {
-        props: {
-            value: {}
+export default {
+    methods: {
+        selectLocale: function (value) {
+            this.$store.commit('setCurrentLanguage', value);
+        }
+    },
+    computed: {
+        languages: function () {
+            return Pckg.config.locale.languages || {};
         },
-        model: {
-            prop: 'value'
-        },
-        methods: {
-            selectLocale: function (value) {
-                this.$emit('input', value);
-            }
+        value: function () {
+            return this.$store.state.config.config.locale.current;
         }
     }
+}
 </script>
