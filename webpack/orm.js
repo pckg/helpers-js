@@ -192,7 +192,15 @@ export class Record {
     }
 
     getEntity() {
+        if (typeof this.$entity === 'object') {
+            return this.$entity;
+        }
+
         return new this.$entity;
+    }
+
+    setEntity(entity) {
+        this.$entity = entity;
     }
 
     save() {
