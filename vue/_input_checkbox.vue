@@ -1,5 +1,5 @@
 <template>
-    <span class="d-input-checkbox" :class="disabled ? 'is-disabled' : ''">
+    <span class="d-input-checkbox" :class="[disabled ? 'is-disabled' : '', isSelected ? '--selected' : '']">
         <label class="__checkbox-label"
                @click="toggleValue">
             <i class="__checkbox-icon fa-fw"
@@ -71,13 +71,18 @@
             }
         },
         computed: {
+            isSelected: function(){
+                return Array.isArray(this.cModel)
+                    ? (this.cModel.indexOf(this.value) >= 0)
+                    : (this.cModel == this.value);
+            },
             iconClass: function () {
                 let c = this.options.classes;
                 if (Array.isArray(this.cModel)) {
-                    return this.cModel.indexOf(this.value) >= 0 ? c.multiple.active : c.multiple.inactive;
+                    return this.isSelected ? c.multiple.active : c.multiple.inactive;
                 }
 
-                return this.cModel == this.value ? c.single.active : c.single.inactive;
+                return this.isSelected ? c.single.active : c.single.inactive;
             }
         }
     }
