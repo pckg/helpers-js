@@ -23,7 +23,7 @@ export class Websocket {
     connect(hostname, port, args) {
         this.connection = new ab.Connection({
             url: 'wss://' + hostname + ':' + port,
-            realm: 'realm1',
+            realm: args.realm || 'realm1',
             onchallenge: function (session, method, extra) {
                 if (method === "wampcra") {
                     var keyToUse = args.authSecret;
