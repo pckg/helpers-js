@@ -21,24 +21,31 @@ export class Websocket {
     }
 
     connect(hostname, port, args) {
-        this.connection = new ab.Connection({
+        let info = {
             url: 'wss://' + hostname + ':' + port,
-            realm: args.realm || 'realm1',
-            onchallenge: function (session, method, extra) {
-                if (method === "wampcra") {
-                    var keyToUse = args.authSecret;
-                    if (typeof extra.salt !== 'undefined') {
-                        keyToUse = ab.auth_cra.derive_key(args.authSecret, extra.salt);
-                    }
+            realm: args.realm || 'realm1'
+        };
 
-                    return ab.auth_cra.sign(keyToUse, extra.challenge);
-                } else {
-                    throw "don't know how to authenticate using '" + method + "'";
-                }
-            },
-            authmethods: [args.authMethod],
-            authid: args.authId
-        });
+        if (args.authid) {
+            info = Object.assign(info, {
+                onchallenge: function (session, method, extra) {
+                    if (method === "wampcra") {
+                        var keyToUse = args.authSecret;
+                        if (typeof extra.salt !== 'undefined') {
+                            keyToUse = ab.auth_cra.derive_key(args.authSecret, extra.salt);
+                        }
+
+                        return ab.auth_cra.sign(keyToUse, extra.challenge);
+                    } else {
+                        throw "don't know how to authenticate using '" + method + "'";
+                    }
+                },
+                authmethods: [args.authMethod],
+                authid: args.authId
+            });
+        }
+        
+        this.connection = new ab.Connection(info);
 
         this.connection.onopen = function (session) {
             this.session = session;
