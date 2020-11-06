@@ -1,7 +1,7 @@
 <template>
 
     <!-- translation dropdown -->
-    <div class="dropdown display-inline">
+    <div class="c-pckg-locale-dropdown dropdown display-inline">
         <a class="dropdown-toggle not-link btn-xs" type="button"
            data-toggle="dropdown">
             <span class="caret"></span>

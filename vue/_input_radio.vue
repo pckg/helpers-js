@@ -1,13 +1,16 @@
 <template>
+    <!-- default, incorrect? -->
     <span v-if="!wrap" class="d-input-radio" :class="[disabled ? 'disabled' : '', cModel === value ? '--selected' : '']">
-        <!--<input type="radio" :name="name" :id="id" :value="value" :disabled="disabled"/>-->
-        <i @click.prevent="setValue"
+        <span v-if="design === 'alphabetic'" class="__radio-icon-alpha">{{ index }}</span>
+        <i v-else
+           @click.prevent="setValue"
            class="__radio-icon"
            :class="cModel == value ? 'fas fa-dot-circle' : 'fal fa-circle'"></i>
         <label v-if="(label && label.length > 0) || $slots.default"
                class="__radio-label"
                @click.prevent="setValue">{{ label }}<slot></slot></label>
     </span>
+    <!-- alternative, better? -->
     <label v-else class="d-input-radio --wrapped" :class="[disabled ? 'disabled' : '', cModel === value ? '--selected' : '']"
            @click.prevent="setValue">
         <i class="__radio-icon"
@@ -28,6 +31,12 @@
             label: {},
             wrap: {
                 default: false
+            },
+            design: {
+                default: 'default'
+            },
+            index: {
+              default: null
             }
         },
         model: {
