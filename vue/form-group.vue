@@ -2,7 +2,6 @@
     <div class="c-form-group form-group"
          :class="$refs.validatorComponent && $refs.validatorComponent.isVisible ? '--has-error' : ''">
         <div class="__form-label-holder" v-if="label || (translatable && localeDropdown)">
-
             <label v-if="label || tooltip">
                 {{ myOptions.required ? asterisk : '' }}{{ label }}
                 <pckg-tooltip v-if="tooltip" icon="question-circle" icon-style="fal" :content="tooltip"></pckg-tooltip>
@@ -16,6 +15,12 @@
             <div v-else-if="type === 'raw'" v-html="myValue"></div>
             <div v-else-if="type === 'encoded'"
                  :class="!myValue || myValue.length === 0 ? 'color-grayish' : ''">{{ myComputedValue && myComputedValue.length > 0 ? myComputedValue : placeholder }}</div>
+            <select v-else-if="type === 'select:native'"
+                    v-model="myValue"
+                    class="form-control"
+                    :class="myOptions.className || ''">
+                <option v-for="(option, key) in myOptions.options" :value="key">{{ option }}</option>
+            </select>
             <pckg-select v-else-if="type === 'select:single'"
                          :initial-options="myOptions.options"
                          :initial-multiple="false"
@@ -171,12 +176,16 @@
             <pckg-htmlbuilder-dropzone v-else-if="type === 'file:custom'"
                                        :url="myOptions.url || null"
                                        :params="myOptions.params || {}"
+                                       :options="myOptions.options || {maxSize: 2, manualProcess: true}"
                                        :id="myOptions.id"
                                        @uploaded="$emit('uploaded', $event)"
-                                       v-model="myValue"></pckg-htmlbuilder-dropzone>
+                                       v-model="myValue"
+                                       ref="uploader"></pckg-htmlbuilder-dropzone>
 
             <!-- editor -->
-            <pckg-htmleditor v-else-if="type === 'editor'" v-model="myValue"></pckg-htmleditor>
+            <pckg-htmleditor v-else-if="type === 'editor'" v-model="myValue" :id="myOptions.id || null"></pckg-htmleditor>
+
+            <slot v-if="$slots.default"></slot>
 
         </div>
         <slot v-if="$slots.help" name="help" class="help"></slot>
