@@ -43,11 +43,12 @@
 </template>
 
 <script>
-    //import Dropzone from "dropzone";
+    import Dropzone from "dropzone";
+    import {v4} from "uuid";
 
     export default {
         name: 'pckg-htmlbuilder-dropzone',
-        //mixins: [pckgCdn],
+        mixins: [pckgCdn],
         props: {
             current: {
                 type: String,
@@ -69,7 +70,9 @@
             },
             id: {
                 type: String,
-                default: ''
+                default: function(){
+                    return v4();
+                }
             },
             value: {
                 type: String,
