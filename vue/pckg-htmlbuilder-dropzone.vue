@@ -71,7 +71,7 @@
             id: {
                 type: String,
                 default: function(){
-                    return v4();
+                    return 'dropzone-' + v4();
                 }
             },
             value: {
