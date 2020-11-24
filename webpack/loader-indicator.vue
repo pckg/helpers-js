@@ -1,5 +1,5 @@
 <template>
-    <div class="c-loader-indicator" :class="stateClass" :style="{width: width}"></div>
+    <div class="c-loader-indicator" :class="stateClass" :style="{width: percentage + '%'}"></div>
 </template>
 
 <style lang="less" scoped>
@@ -22,6 +22,7 @@
     }
     &.--loaded {
         transition: width .5s ease-in;
+        width: 100%;
     }
 
     &.--out {
@@ -40,28 +41,35 @@ export default {
         };
     },
     computed: {
-        width: function () {
-            return this.active && this.percentage > 0 ? this.percentage + '%' : 0;
-        },
         stateClass: function () {
             return [this.active ? '--in --loading' : '--out', this.percentage === 100 ? '--loaded' : ''];
         }
     },
     created: function () {
         $dispatcher.$on('page:loading', () => {
+            console.log('page:loading');
             this.percentage = 0;
             this.active = false;
             this.$nextTick(() => {
+                console.log('page:loading next');
+                if (this.percentage > 0) {
+                    console.log('already loaded?');
+                    return;
+                }
                 this.percentage = 50;
                 this.active = true;
             });
         });
         $dispatcher.$on('page:resolving', () => {
-            this.percentage = 75;
+            console.log('page:resolving');
+            this.percentage = 66;
+            this.active = true;
         });
         $dispatcher.$on('page:loaded', () => {
+            console.log('page:loaded');
             this.percentage = 100;
             setTimeout(() => {
+                this.percentage = 0;
                 this.active = false;
             }, 1000);
         });
