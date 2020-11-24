@@ -15,15 +15,18 @@
     cursor: progress;
 
     &.--in {
-        transition: width 2500ms ease-out;
         opacity: 1;
     }
-    &.--fast {
+    &.--loading {
+        transition: width 1000ms ease-in-out;
+    }
+    &.--loaded {
         transition: width .5s ease-in;
     }
 
     &.--out {
         opacity: 0;
+        transition: none;
     }
 }
 </style>
@@ -41,7 +44,7 @@ export default {
             return this.active && this.percentage > 0 ? this.percentage + '%' : 0;
         },
         stateClass: function () {
-            return [this.active ? '--in' : '--out', this.percentage === 100 ? '--fast' : ''];
+            return [this.active ? '--in --loading' : '--out', this.percentage === 100 ? '--loaded' : ''];
         }
     },
     created: function () {
@@ -60,7 +63,7 @@ export default {
             this.percentage = 100;
             setTimeout(() => {
                 this.active = false;
-            }, 550);
+            }, 1000);
         });
     }
 }
