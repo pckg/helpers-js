@@ -1,5 +1,5 @@
 <template>
-    <div class="c-loader-indicator" :class="stateClass" :style="{width: percentage + '%'}"></div>
+    <div class="c-loader-indicator" :class="stateClass""></div>
 </template>
 
 <style lang="less" scoped>
@@ -9,26 +9,29 @@
     top: 0;
     left: 0;
     width: 0;
-    height: .5rem;
+    height: .4rem;
     background: linear-gradient(to left, var(--color-primary, var(--color-p)), var(--color-secondary, var(--color-s)));
     opacity: 0;
     cursor: progress;
+    width: 25%;
 
     &.--in {
         opacity: 1;
-    }
-    &.--loading {
-        transition: width 1000ms ease-in-out;
-    }
-    &.--loaded {
-        transition: width .5s ease-in;
-        width: 100%;
+        animation: slideright 2s infinite;
     }
 
     &.--out {
         opacity: 0;
-        transition: none;
     }
+
+    &.loaded {
+        transition: all 333ms ease-in-out;
+    }
+}
+
+@keyframes slideright {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(400%); }
 }
 </style>
 
@@ -71,7 +74,7 @@ export default {
             setTimeout(() => {
                 this.percentage = 0;
                 this.active = false;
-            }, 1000);
+            }, 333);
         });
     }
 }
