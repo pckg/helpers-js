@@ -58,7 +58,9 @@ export class Record {
             return this;
         }
 
-        this[key] = value;
+        $vue
+            ? ($vue.$set(this, key, value))
+            : (this[key] = value);
         return this;
     }
 

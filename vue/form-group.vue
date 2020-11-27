@@ -14,7 +14,9 @@
             <slot v-if="$slots.element" name="element"></slot>
             <div v-else-if="type === 'raw'" v-html="myValue"></div>
             <div v-else-if="type === 'encoded'"
-                 :class="!myValue || myValue.length === 0 ? 'color-grayish' : ''">{{ myComputedValue && myComputedValue.length > 0 ? myComputedValue : placeholder }}</div>
+                 :class="!myValue || myValue.length === 0 ? 'color-grayish' : ''">
+                {{ myComputedValue && myComputedValue.length > 0 ? myComputedValue : placeholder }}
+            </div>
             <select v-else-if="type === 'select:native'"
                     v-model="myValue"
                     class="form-control"
@@ -138,7 +140,8 @@
                     <d-input-checkbox v-model="myValue"
                                       :value="key"
                                       :index="alphaIndex(i)"
-                                      :design="myOptions.design || null">{{ title }}</d-input-checkbox>
+                                      :design="myOptions.design || null">{{ title }}
+                    </d-input-checkbox>
                 </div>
             </template>
 
@@ -183,7 +186,8 @@
                                        ref="uploader"></pckg-htmlbuilder-dropzone>
 
             <!-- editor -->
-            <pckg-htmleditor v-else-if="type === 'editor'" v-model="myValue" :id="myOptions.id || null"></pckg-htmleditor>
+            <pckg-htmleditor v-else-if="type === 'editor'" v-model="myValue"
+                             :id="myOptions.id || null"></pckg-htmleditor>
 
             <slot v-if="$slots.default"></slot>
 
@@ -262,16 +266,16 @@ export default {
         },
     },
     methods: {
-        alphaIndex: function(index){
+        alphaIndex: function (index) {
             return ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'w', 'x', 'y', 'z'][index] || null;
         },
     },
     computed: {
-        defaultLocale: function(){
-            return this.$store.state.config.config.locale.default;
+        defaultLocale: function () {
+            return this.$store.state.config ? this.$store.state.config.config.locale.default : 'en_gb';
         },
-        currentLocale: function(){
-            return this.$store.state.config.config.locale.current;
+        currentLocale: function () {
+            return this.$store.state.config ? this.$store.state.config.config.locale.current : 'en_gb';
         },
         myComputedValue: {
             get: function () {
