@@ -29,7 +29,8 @@
                          v-model="myValue"
                          :class="myOptions.className || ''"
                          :has-search="!myOptions.noSearch"
-                         :parent-value="myOptions.parent"></pckg-select>
+                         :parent-value="myOptions.parent"
+                         :is-required="typeof myOptions.required !== 'undefined' ? myOptions.required : true"></pckg-select>
             <pckg-select v-else-if="type === 'select:multiple'"
                          :initial-options="myOptions.options"
                          :initial-multiple="true"
@@ -38,8 +39,8 @@
                          :has-search="!myOptions.noSearch"
                          :parent-value="myOptions.parent"></pckg-select>
             <d-input-toggle v-else-if="type === 'toggle'"
-                            :off="myOptions.off || false"
-                            :on="myOptions.on || true"
+                            :off="myOptions.off || null"
+                            :on="myOptions.on || 1"
                             :is-disabled="myOptions.disabled || false"
                             v-model="myValue"
                             :class="myOptions.className || ''"></d-input-toggle>
