@@ -15,6 +15,12 @@
                            :placeholder="searchPlaceholder"
                            @keydown.enter="selectFirst"/>
                 </li>
+                <li class="no-hover"
+                    v-else-if="hasFilter">
+                    <input type="text" class="form-control input-sm"
+                           v-model="filter"
+                           placeholder="Filter"/>
+                </li>
                 <li v-if="!isRequired" @click.prevent="toggleOption($event, null)">
                     <a href="#" @click.prevent class="color-grayish">
                         {{ withEmpty }}
@@ -60,6 +66,7 @@
                 selectedModel: this.makeModel(this.selected),
                 loading: false,
                 search: '',
+                filter: '',
                 myParentValue: this.parentValue,
             };
         },
@@ -68,6 +75,9 @@
                 default: 'Search ...',
             },
             hasSearch: {
+                default: true
+            },
+            hasFilter: {
                 default: true
             },
             title: {
@@ -132,11 +142,25 @@
 
                 return {'max-height': h + 'px'};
             },
+            filteredOptions: function () {
+                if (!this.filter || this.filter.length === 0) {
+                    return this.options;
+                }
+
+                let finalOptions = {};
+                $.each(this.options, (i, option) => {
+                    if (JSON.stringify(option).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0) {
+                        finalOptions[i] = option;
+                    }
+                });
+
+                return finalOptions;
+            },
             finalOptions: function () {
-                return this.extractOptions(this.options);
+                return this.extractOptions(this.filteredOptions);
             },
             finalOptionGroups: function () {
-                return this.extractOptionGroups(this.options);
+                return this.extractOptionGroups(this.filteredOptions);
             },
             selectedTitle: function () {
                 let selected = Array.isArray(this.selectedModel) ? this.selectedModel : [this.selectedModel];
@@ -248,7 +272,7 @@
                 }
 
                 var options = {};
-                $.each(this.options, function (key, item) {
+                $.each(this.filteredOptions, function (key, item) {
                     if (typeof item === 'string' || typeof item === 'number') {
                         return;
                     }
