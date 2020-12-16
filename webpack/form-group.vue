@@ -1,22 +1,29 @@
 <template>
     <div class="form-group">
-        <label v-if="$slots.label || label">
+        <label v-if="$slots.label || label" :for="uuidName">
             <slot name="label" :my-value="myValue"></slot>
             {{ label }}
         </label>
         <div class="flex-row">
             <div v-if="prefix" class="flex-item">{{ prefix }}</div>
             <div class="--auto">
-                <input v-if="isInput" :type="type" class="form-control" :name="name" :placeholder="placeholder"
+                <slot name="element" v-if="$slots.element"></slot>
+                <input v-else-if="isInput" :type="type" class="form-control" :name="name" :id="uuidName" :placeholder="placeholder"
                        v-model="myValue"/>
                 <slot v-else-if="type === 'slot'" name="slot" :my-value="myValue"></slot>
                 <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control">
                     <option>{{ placeholder }}</option>
                     <option v-for="(val, key) in myOptions.options" :value="key">{{ val }}</option>
                 </select>
+                <select v-else-if="type === 'select:single'" :name="name" class="form-control" v-model="myValue">
+                    <option>{{ placeholder }}</option>
+                    <option v-for="(val, key) in myOptions.options" :value="key">{{ val }}</option>
+                </select>
                 <textarea v-else-if="type === 'textarea'" :name="name" class="form-control">{{ myValue }}</textarea>
+                <span v-else-if="type === 'encoded'">{{ myValue }}</span>
             </div>
         </div>
+        <div v-if="help" v-html="help"></div>
         <htmlbuilder-validator-error v-if="name && $parent.errors"
                                      :bag="$parent.errors"
                                      ref="validatorComponent"
@@ -27,6 +34,8 @@
 <script>
 import HtmlbuilderValidatorError
     from "../../../../vendor/pckg/htmlbuilder/src/Pckg/Htmlbuilder/View/htmlbuilderValidatorError.vue";
+
+import {v4} from "uuid";
 
 export default {
     inject: ['$validator'],
@@ -45,6 +54,9 @@ export default {
             default: null
         },
         value: {
+            default: null
+        },
+        help: {
             default: null
         },
         type: {
@@ -73,12 +85,16 @@ export default {
     data: function () {
         return {
             myValue: this.value,
-            myOptions: this.options || {}
+            myOptions: this.options || {},
+            uuid: v4()
         };
     },
     computed: {
         isInput: function () {
-            return ['text', 'email', 'number', 'datetime'].indexOf(this.type) >= 0;
+            return ['text', 'email', 'number', 'datetime', 'password'].indexOf(this.type) >= 0;
+        },
+        uuidName: function () {
+            return this.name + '_' + this.uuid;
         }
     }
 }
