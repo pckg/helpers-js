@@ -20,6 +20,7 @@
                     <option v-for="(val, key) in myOptions.options" :value="key">{{ val }}</option>
                 </select>
                 <textarea v-else-if="type === 'textarea'" :name="name" class="form-control">{{ myValue }}</textarea>
+                <pckg-htmleditor v-else-if="type === 'editor'" :name="name" :id="uuidName" v-model="myValue"></pckg-htmleditor>
                 <span v-else-if="type === 'encoded'">{{ myValue }}</span>
             </div>
         </div>

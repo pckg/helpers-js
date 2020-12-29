@@ -245,7 +245,7 @@ export class Record {
     }
 
     insert() {
-        return this.getEntity().query(this.$path + ':delete');
+        return this.getEntity().query('insert', this.$data);
     }
 
     delete() {
@@ -253,7 +253,7 @@ export class Record {
 
         this.applyUniqueCondition(entity);
 
-        return entity.query(this.$path + ':delete');
+        return entity.query('delete');
     }
 
     update() {
@@ -261,7 +261,7 @@ export class Record {
 
         this.applyUniqueCondition(entity);
 
-        return entity.query(this.$path + ':update', this.$data);
+        return entity.query('update', this.$data);
     }
 
     clone(data) {
@@ -289,6 +289,10 @@ export class Record {
     set(key, value) {
         $vue.$set(this.$data, key, value);
         return this;
+    }
+    
+    promise(task) {
+        return new Promise(task);
     }
 
 }
@@ -603,11 +607,11 @@ export class Entity {
                     "X-Pckg-Locale": Pckg?.config?.locale?.current
                 }),
                 data: {
-                    action: action,
+                    action: this.$path + ':' + action,
                     data: data,
                     query: q
                 }
-            }).done(resolve);
+            }).done(resolve).fail(reject);
         });
     }
 
