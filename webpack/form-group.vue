@@ -25,7 +25,10 @@
                     </option>
                 </select>
                 <textarea v-else-if="type === 'textarea'" :name="name" class="form-control">{{ myValue }}</textarea>
-                <pckg-htmleditor v-else-if="type === 'editor'" :name="name" :id="uuidName"
+                <pckg-htmleditor v-else-if="type === 'editor'"
+                                 :name="name"
+                                 :id="uuidName"
+                                 :variables="editorVariables"
                                  v-model="myValue"></pckg-htmleditor>
                 <span v-else-if="type === 'encoded'">{{ myValue }}</span>
             </div>
@@ -102,6 +105,9 @@ export default {
         },
         uuidName: function () {
             return this.name + '_' + this.uuid;
+        },
+        editorVariables: function () {
+            return (this.options && this.options.editor && this.options.editor.variables) || [];
         }
     },
     methods: {

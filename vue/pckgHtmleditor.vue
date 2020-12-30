@@ -5,50 +5,60 @@
 </template>
 
 <script>
-    export default {
-        name: 'pckg-htmleditor',
-        props: {
-            id: {
-                default: function () {
-                    return 'pckg-editor-htmleditor' + parseInt(Math.random() * 1000000) % 1000000;
-                }
-            },
-            value: {
-                default: '',
-                type: String
-            },
-            forcedRootBlock: {
-                default: false
+import tinymce from 'tinymce';
+
+export default {
+    name: 'pckg-htmleditor',
+    props: {
+        id: {
+            default: function () {
+                return 'pckg-editor-htmleditor' + parseInt(Math.random() * 1000000) % 1000000;
             }
         },
-        model: {
-            prop: 'value'
+        value: {
+            default: '',
+            type: String
         },
-        watch: {
-            value: function (n, o) {
-                if (n != o) {
-                    this.updateEditorValue();
-                }
+        forcedRootBlock: {
+            default: false
+        },
+        variables: {
+            default: function(){
+                return [];
+            }
+        }
+    },
+    model: {
+        prop: 'value'
+    },
+    watch: {
+        value: function (n, o) {
+            if (n != o) {
+                this.updateEditorValue();
+            }
+        }
+    },
+    data: function () {
+        return {
+            _editor: null
+        };
+    },
+    methods: {
+        emitChange: function (value) {
+            this.$emit('input', value);
+            this.$emit('change', value);
+        },
+        updateEditorValue: function () {
+            if (this._editor && this._editor.getContent() != this.value) {
+                this._editor.setContent(this.value || '');
             }
         },
-        data: function () {
-            return {
-                _editor: null
-            };
-        },
-        methods: {
-            emitChange: function (value) {
-                this.$emit('input', value);
-                this.$emit('change', value);
-            },
-            updateEditorValue: function () {
-                if (this._editor && this._editor.getContent() != this.value) {
-                    this._editor.setContent(this.value || '');
-                }
-            },
-            initEditor: function () {
+        initEditor: function () {
+            this.$nextTick(() => {
+                console.log('in next tick');
                 initTinymce(this.id, {
                     forced_root_block: this.forcedRootBlock,
+                    variables: this.variables,
                     setup: function (editor) {
                         this._editor = editor;
                         editor.on('Change', function (e) {
@@ -60,13 +70,14 @@
                         }.bind(this));
                     }.bind(this)
                 });
-            }
-        },
-        mounted: function () {
-            this.initEditor();
-        },
-        destroyed: function () {
-            destroyTinymce(this.id);
+            });
         }
+    },
+    mounted: function () {
+        this.initEditor();
+    },
+    destroyed: function () {
+        destroyTinymce(this.id);
     }
+}
 </script>
