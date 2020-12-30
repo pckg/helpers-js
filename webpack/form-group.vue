@@ -8,19 +8,25 @@
             <div v-if="prefix" class="flex-item">{{ prefix }}</div>
             <div class="--auto">
                 <slot name="element" v-if="$slots.element"></slot>
-                <input v-else-if="isInput" :type="type" class="form-control" :name="name" :id="uuidName" :placeholder="placeholder"
+                <input v-else-if="isInput" :type="type" class="form-control" :name="name" :id="uuidName"
+                       :placeholder="placeholder"
                        v-model="myValue"/>
                 <slot v-else-if="type === 'slot'" name="slot" :my-value="myValue"></slot>
                 <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control">
                     <option>{{ placeholder }}</option>
-                    <option v-for="(val, key) in myOptions.options" :value="key">{{ val }}</option>
+                    <option v-for="(val, key) in myOptions.options" :value="getOptionValue(val, key)">
+                        {{ getOptionName(val, key) }}
+                    </option>
                 </select>
                 <select v-else-if="type === 'select:single'" :name="name" class="form-control" v-model="myValue">
                     <option>{{ placeholder }}</option>
-                    <option v-for="(val, key) in myOptions.options" :value="key">{{ val }}</option>
+                    <option v-for="(val, key) in myOptions.options" :value="getOptionValue(val, key)">
+                        {{ getOptionName(val, key) }}
+                    </option>
                 </select>
                 <textarea v-else-if="type === 'textarea'" :name="name" class="form-control">{{ myValue }}</textarea>
-                <pckg-htmleditor v-else-if="type === 'editor'" :name="name" :id="uuidName" v-model="myValue"></pckg-htmleditor>
+                <pckg-htmleditor v-else-if="type === 'editor'" :name="name" :id="uuidName"
+                                 v-model="myValue"></pckg-htmleditor>
                 <span v-else-if="type === 'encoded'">{{ myValue }}</span>
             </div>
         </div>
@@ -97,6 +103,22 @@ export default {
         uuidName: function () {
             return this.name + '_' + this.uuid;
         }
+    },
+    methods: {
+        getOptionValue: function (val, key) {
+            if (typeof val === 'object') {
+                return val.value;
+            }
+
+            return val;
+        },
+        getOptionName: function (val, key) {
+            if (typeof val === 'object') {
+                return val.name;
+            }
+
+            return key;
+        },
     }
 }
 </script>
