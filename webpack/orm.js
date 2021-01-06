@@ -13,15 +13,26 @@ export class Record {
         /**
          * Set getters for data.
          */
+        this.$unique.forEach((key) => {
+            this.registerProperty(key);
+        });
         Object.keys(this.$data).forEach((key) => {
-            Object.defineProperty(this, key, {
-                get: () => {
-                    return this.$data[key];
-                },
-                set: (value) => {
-                    return this.$data[key] = value;
-                },
-            });
+            this.registerProperty(key);
+        });
+    }
+
+    registerProperty(key) {
+        if (this.hasOwnProperty(key)) {
+            return;
+        }
+
+        Object.defineProperty(this, key, {
+            get: () => {
+                return this.$data[key];
+            },
+            set: (value) => {
+                return this.$data[key] = value;
+            },
         });
     }
 
@@ -38,6 +49,7 @@ export class Record {
     }*/
 
     __set(key, value) {
+        console.log('setting', key, value);
         if (typeof key !== 'string' || key.indexOf('_') === 0 || key.indexOf('$') === 0) {
             this[key] = value;
             return;
@@ -54,12 +66,13 @@ export class Record {
         }
 
         if (this.$data.hasOwnProperty(key)) {
+            console.log('hasOwnProperty', key);
             this.$data[key] = value;
             return this;
         }
+        console.log('setting new', key);
 
-        $vue
-            ? ($vue.$set(this, key, value))
+        $vue ? ($vue.$set(this, key, value))
             : (this[key] = value);
         return this;
     }
