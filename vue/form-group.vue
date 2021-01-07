@@ -30,6 +30,9 @@
                          :class="myOptions.className || ''"
                          :has-search="!myOptions.noSearch"
                          :parent-value="myOptions.parent"
+                         :flat="myOptions.flat || false"
+                         :id="myOptions.id || null"
+                         :title="myOptions.title || null"
                          :is-required="typeof myOptions.required !== 'undefined' ? myOptions.required : true"></pckg-select>
             <pckg-select v-else-if="type === 'select:multiple'"
                          :initial-options="myOptions.options"

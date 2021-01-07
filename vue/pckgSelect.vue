@@ -9,14 +9,14 @@
             </a>
             <ul class="dropdown-menu" :style="maxHeightStyle" v-if="!isDisabled">
                 <li class="no-hover"
-                    v-if="hasSearch && ((refreshUrl && refreshUrl.length > 0) || (options && Object.keys(options).length > 10))">
+                    v-if="hasSearch && (refreshUrl && refreshUrl.length > 0)">
                     <input type="text" class="form-control input-sm"
                            v-model="search"
                            :placeholder="searchPlaceholder"
                            @keydown.enter="selectFirst"/>
                 </li>
                 <li class="no-hover"
-                    v-else-if="hasFilter">
+                    v-else-if="hasFilter && (finalOptions.length > 10 || (filter && filter.length > 0))">
                     <input type="text" class="form-control input-sm"
                            v-model="filter"
                            placeholder="Filter"/>
@@ -26,24 +26,24 @@
                         {{ withEmpty }}
                     </a>
                 </li>
-                <li v-for="(option, key) in finalOptions" :key="key" @click.prevent="toggleOption($event, key)">
+                <li v-for="option in finalOptions" :key="option.value" @click.prevent="toggleOption($event, option.value)">
                     <a href="#" @click.prevent>
                         <span class="text-left">
-                            <i v-if="myMultiple && isValueSelected(key)" class="fas fa-fw fa-check-square"></i>
-                            <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
-                            {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fas fa-fw fa-check"></i>
+                            <i v-if="myMultiple && isValueSelected(option.value)" class="fas fa-fw fa-check-square"></i>
+                            <i v-else-if="myMultiple && !isValueSelected(option.value)" class="fal fa-fw fa-square"></i>
+                            {{ option.name }}
+                            <i v-if="!myMultiple && isValueSelected(option.value)" class="fas fa-fw fa-check"></i>
                         </span>
                     </a>
                 </li>
                 <template v-for="(optgroup, label) in finalOptionGroups">
                     <li :key="label"><b>{{ label }}</b></li>
-                    <li v-for="(option, key) in optgroup" :key="label + key" @click.prevent="toggleOption($event, key)">
+                    <li v-for="option in optgroup" :key="label + option.value" @click.prevent="toggleOption($event, option.value)">
                         <a href="#" @click.prevent>
-                            <i v-if="myMultiple && isValueSelected(key)" class="fas fa-fw fa-check-square"></i>
-                            <i v-else-if="myMultiple && !isValueSelected(key)" class="fal fa-fw fa-square"></i>
-                            {{ option}}
-                            <i v-if="!myMultiple && isValueSelected(key)" class="fas fa-fw fa-check"></i>
+                            <i v-if="myMultiple && isValueSelected(option.value)" class="fas fa-fw fa-check-square"></i>
+                            <i v-else-if="myMultiple && !isValueSelected(option.value)" class="fal fa-fw fa-square"></i>
+                            {{ option.name }}
+                            <i v-if="!myMultiple && isValueSelected(option.value)" class="fas fa-fw fa-check"></i>
                         </a>
                     </li>
                 </template>
@@ -167,17 +167,19 @@
                 let titles = [];
 
                 let options = this.finalOptions;
-                $.each(options, function (i, option) {
-                    if (selected.indexOf(i) >= 0 || selected.indexOf(parseInt(i)) >= 0 || selected.indexOf(i.toString()) >= 0) {
-                        titles.push(option);
+                $.each(options, (i, option) => {
+                    let k = this.getId(option, i);
+                    if (selected.indexOf(k) >= 0 || selected.indexOf(parseInt(k)) >= 0 || selected.indexOf(k.toString()) >= 0) {
+                        titles.push(this.getTitle(option, i));
                     }
                 });
 
                 let groups = this.finalOptionGroups;
-                $.each(groups, function (i, optionGroup) {
-                    $.each(optionGroup, function (j, option) {
-                        if (selected.indexOf(j) >= 0 || selected.indexOf(parseInt(j)) >= 0 || selected.indexOf(j.toString()) >= 0) {
-                            titles.push(option);
+                $.each(groups, (i, optionGroup) => {
+                    $.each(optionGroup, (j, option) => {
+                        let k = this.getId(option, j);
+                        if (selected.indexOf(k) >= 0 || selected.indexOf(parseInt(k)) >= 0 || selected.indexOf(k.toString()) >= 0) {
+                            titles.push(this.getTitle(option, j));
                         }
                     });
                 });
@@ -189,7 +191,7 @@
                 let joined = titles.filter(function(value, index, self){ return self.indexOf(value) === index; }).join(', ');
 
                 if (joined.length > 42) {
-                    return joined.substring(0, 42) + ' ...';
+                    return joined.substring(0, 42) + '...';
                 }
 
                 return joined;
@@ -238,7 +240,7 @@
                     && (typeof key == 'string' && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search);
             },
             extractOptions: function (o) {
-                var options = {};
+                var options = [];
 
                 $.each(o, function (key, item) {
                     if (this.flat) {
@@ -247,7 +249,10 @@
                         if (this.isOptionFiltered(k, title)) {
                             return;
                         }
-                        options[k] = title;
+                        options.push({
+                            value: k,
+                            name: title
+                        });
                         return;
                     }
 
@@ -261,7 +266,10 @@
                     if (this.isOptionFiltered(k, title)) {
                         return;
                     }
-                    options[k] = title;
+                    options.push({
+                        value: k,
+                        name: title
+                    });
                 }.bind(this));
 
                 return options;
@@ -285,9 +293,9 @@
                                 return;
                             }
                             if (!options[key]) {
-                                options[key] = {};
+                                options[key] = [];
                             }
-                            options[key][k] = title;
+                            options[key].push({value: k, name: title});
                         }.bind(this));
                         return
                     }
@@ -297,7 +305,10 @@
                     if (this.isOptionFiltered(k, title)) {
                         return;
                     }
-                    options[k] = title;
+                    if (!options['_']) {
+                        options['_'] = [];
+                    }
+                    options['_'].push({value: k, name: title});
                 }.bind(this));
 
                 return options;
@@ -311,7 +322,7 @@
                 let options = this.extractOptions(o);
                 $.each(this.extractOptionGroups(o), function (i, group) {
                     $.each(group, function (j, option) {
-                        options[j] = option;
+                        options.push(option);
                     });
                 });
                 return options;
@@ -325,19 +336,19 @@
                     return this.title(option);
                 }
 
-                if (!this.title.length) {
+                if (!(this.title.length > 0)) {
                     return option;
                 }
 
                 return option[this.title];
             },
             getId: function (option, id) {
-                if (!this.id.length) {
+                if (!this.id || !(this.id.length > 0)) {
                     return id;
                 }
 
                 if (typeof option != 'object') {
-                    return option;
+                    return id;
                 }
 
                 return option[this.id];

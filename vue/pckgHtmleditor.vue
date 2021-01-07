@@ -1,6 +1,6 @@
 <template>
     <div class="pckg-htmleditor">
-        <textarea class="form-control" v-model="value" :id="id"></textarea>
+        <textarea class="form-control" v-model="value" :id="id" @change="emitChange(value)"></textarea>
     </div>
 </template>
 

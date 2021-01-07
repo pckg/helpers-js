@@ -37,6 +37,9 @@
             },
             index: {
               default: null
+            },
+            required: {
+                default: false
             }
         },
         model: {
@@ -55,6 +58,9 @@
         methods: {
             setValue: function () {
                 if (this.cModel == this.value) {
+                    if (this.required) {
+                      return;
+                    }
                     this.cModel = null;
                     this.$emit('input', null);
                     return;
