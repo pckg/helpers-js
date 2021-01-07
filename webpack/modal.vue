@@ -2,7 +2,7 @@
     <transition name="modal">
         <div class="modal-mask" :class="maskClass">
             <div class="modal-wrapper" @click.self="$emit('close')">
-                <div class="modal-container container --lg">
+                <div class="modal-container container" :class="sizeClass">
                     <a href="#"
                        @click.prevent="$emit('close')"
                        class="absolute color-white"
@@ -33,6 +33,9 @@ export default {
         },
         maskClass: {
             default: null
+        },
+        sizeClass: {
+            default: '--lg',
         }
     }
 }
