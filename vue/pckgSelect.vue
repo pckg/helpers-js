@@ -91,9 +91,7 @@
                 default: false,
                 type: Boolean
             },
-            withEmpty: {
-                default: ' - - open - -'
-            },
+            withEmpty: '--opened--',
             initialOptions: {
                 default: function () {
                     return [];
@@ -336,22 +334,14 @@
                     return this.title(option);
                 }
 
-                if (!(this.title.length > 0)) {
-                    return option;
-                }
-
-                return option[this.title];
+                return option[this.title || 'name'];
             },
             getId: function (option, id) {
-                if (!this.id || !(this.id.length > 0)) {
-                    return id;
-                }
-
                 if (typeof option != 'object') {
                     return id;
                 }
 
-                return option[this.id];
+                return option[this.id || 'value'];
             },
             toggleOption: function ($event, key) {
                 if (this.initialMultiple) {
