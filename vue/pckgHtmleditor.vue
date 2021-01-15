@@ -7,7 +7,7 @@
 <script>
 console.log('importing tinymce');
 
-import 'tinymce/plugins/advlist';
+/*import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/autoresize';
 import 'tinymce/plugins/autosave';
@@ -43,7 +43,7 @@ import 'tinymce/plugins/textpattern';
 import 'tinymce/plugins/imagetools';
 import 'tinymce/plugins/colorpicker';
 import 'tinymce/plugins/codesample';
-import 'tinymce/plugins/noneditable';
+import 'tinymce/plugins/noneditable';*/
 
 export default {
     name: 'pckg-htmleditor',
