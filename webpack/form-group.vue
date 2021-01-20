@@ -116,14 +116,14 @@ export default {
                 return val.value;
             }
 
-            return val;
+            return key;
         },
         getOptionName: function (val, key) {
             if (typeof val === 'object') {
                 return val.name;
             }
 
-            return key;
+            return val;
         },
     }
 }
