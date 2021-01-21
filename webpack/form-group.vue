@@ -12,7 +12,7 @@
                        :placeholder="placeholder"
                        v-model="myValue"/>
                 <slot v-else-if="type === 'slot'" name="slot" :my-value="myValue"></slot>
-                <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control">
+                <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control" v-model="myValue">
                     <option>{{ placeholder }}</option>
                     <option v-for="(val, key) in myOptions.options" :value="getOptionValue(val, key)">
                         {{ getOptionName(val, key) }}
@@ -116,14 +116,14 @@ export default {
                 return val.value;
             }
 
-            return val;
+            return key;
         },
         getOptionName: function (val, key) {
             if (typeof val === 'object') {
                 return val.name;
             }
 
-            return key;
+            return val;
         },
     }
 }
