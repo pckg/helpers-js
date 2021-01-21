@@ -72,7 +72,9 @@
         },
         props: {
             searchPlaceholder: {
-                default: 'Search ...',
+                default: function(){
+                    return pckgTranslations.methods.__('common.search');
+                },
             },
             hasSearch: {
                 default: true
@@ -341,7 +343,7 @@
                     return id;
                 }
 
-                return option[this.id || 'value'];
+                return option[this.id || 'value'] || id;
             },
             toggleOption: function ($event, key) {
                 if (this.initialMultiple) {
