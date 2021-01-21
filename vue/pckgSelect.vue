@@ -54,7 +54,7 @@
 
 <script>
     export default {
-        //mixins: [pckgTimeout],
+        mixins: [pckgTranslations],
         name: 'pckg-select',
         model: {
             prop: 'selected',
@@ -183,7 +183,7 @@
                 });
 
                 if (titles.length == 0) {
-                    return this.withEmpty || ' - - select value - - ';
+                    return this.withEmpty || this.__('common.select');
                 }
 
                 let joined = titles.filter(function(value, index, self){ return self.indexOf(value) === index; }).join(', ');
