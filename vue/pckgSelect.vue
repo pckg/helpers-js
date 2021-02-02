@@ -54,7 +54,7 @@
 
 <script>
     export default {
-        //mixins: [pckgTimeout],
+        mixins: [pckgTranslations],
         name: 'pckg-select',
         model: {
             prop: 'selected',
@@ -72,7 +72,9 @@
         },
         props: {
             searchPlaceholder: {
-                default: 'Search ...',
+                default: function(){
+                    return pckgTranslations.methods.__('common.search');
+                },
             },
             hasSearch: {
                 default: true
@@ -183,7 +185,7 @@
                 });
 
                 if (titles.length == 0) {
-                    return this.withEmpty || ' - - select value - - ';
+                    return this.withEmpty || this.__('common.select');
                 }
 
                 let joined = titles.filter(function(value, index, self){ return self.indexOf(value) === index; }).join(', ');
@@ -341,7 +343,7 @@
                     return id;
                 }
 
-                return option[this.id || 'value'];
+                return option[this.id || 'value'] || id;
             },
             toggleOption: function ($event, key) {
                 if (this.initialMultiple) {
