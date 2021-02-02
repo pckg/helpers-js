@@ -261,6 +261,14 @@ export class Record {
         return this.getEntity().query('insert', this.$data);
     }
 
+    fetch() {
+        let entity = this.getEntity();
+
+        this.applyUniqueCondition(entity);
+
+        return entity.query('fetch');
+    }
+
     delete() {
         let entity = this.getEntity();
 
@@ -306,6 +314,9 @@ export class Record {
     
     promise(task) {
         return new Promise(task);
+    }
+    static getDefault() {
+        return new this({});
     }
 
 }
