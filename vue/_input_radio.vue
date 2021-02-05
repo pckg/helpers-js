@@ -1,7 +1,7 @@
 <template>
     <!-- default, incorrect? -->
     <span v-if="!wrap" class="d-input-radio" :class="[disabled ? 'disabled' : '', cModel === value ? '--selected' : '']">
-        <span v-if="design === 'alphabetic'" class="__radio-icon-alpha">{{ index }}</span>
+        <span v-if="design === 'alphabetic'" class="__radio-icon-alpha" @click.prevent="setValue">{{ index }}</span>
         <i v-else
            @click.prevent="setValue"
            class="__radio-icon"
