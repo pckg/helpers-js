@@ -293,6 +293,10 @@ export class Record {
             clone[key] = data[key];
         });
 
+        if (clone.id) {
+            delete clone.id;
+        }
+
         return new this.constructor(clone);
     }
 
