@@ -10,4 +10,7 @@ export default function (to, title) {
     };
     console.log('sending event', event, to);
     gtag('event', 'page_view', event);
+
+    //ga('set', 'page', to.path);
+    //ga('send', 'pageview');
 }
