@@ -280,6 +280,7 @@
                 }
 
                 var options = {};
+                let isFoundFlat = false;
                 $.each(this.filteredOptions, function (key, item) {
                     if (typeof item === 'string' || typeof item === 'number') {
                         return;
@@ -297,7 +298,21 @@
                             }
                             options[key].push({value: k, name: title});
                         }.bind(this));
-                        return
+                        return;
+                    }
+
+                    $.each(item, function (k, v) {
+                        if (!options[key]) {
+                            options[key] = [];
+                        }
+                        if (typeof v === 'string' && typeof k === 'string') {
+                            options[key].push({value: k, name: v});
+                            isFoundFlat = true;
+                        }
+                    });
+
+                    if (isFoundFlat) {
+                        return;
                     }
 
                     let k = this.getId(item, key);
