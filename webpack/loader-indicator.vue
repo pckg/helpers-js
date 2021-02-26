@@ -1,5 +1,5 @@
 <template>
-    <div class="c-loader-indicator" :class="stateClass""></div>
+    <div class="c-loader-indicator" :class="stateClass"></div>
 </template>
 
 <style lang="less" scoped>
