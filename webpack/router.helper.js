@@ -11,6 +11,13 @@ export class RouterHelper {
 
     beforeEach(to, from, next) {
         console.log('before each', to, from);
+
+        typeof $vue !== 'undefined' && $dispatcher.$emit('page:loading');
+
+        if ((to?.meta?.resolves || []).length > 0) {
+            typeof $vue !== 'undefined' && $dispatcher.$emit('page:resolving');
+        }
+
         next();
     }
 
