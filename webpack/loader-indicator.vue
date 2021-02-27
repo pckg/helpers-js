@@ -30,8 +30,12 @@
 }
 
 @keyframes slideright {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(400%); }
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(400%);
+    }
 }
 </style>
 
@@ -76,6 +80,12 @@ export default {
                 this.active = false;
             }, 333);
         });
+        $dispatcher.$on('page:errored', () => {
+            console.log('page errored');
+            this.percentage = 0;
+            this.active = false;
+            $dispatcher.$emit('notification:error', 'Error loading page');
+        })
     }
 }
 </script>
