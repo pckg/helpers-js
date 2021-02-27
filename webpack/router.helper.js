@@ -31,7 +31,12 @@ export class RouterHelper {
         dispatchPageLoaded();
         let title = setSeoTags(to);
         gaPageLoad(to, title);
-        console.log($vue.routeUniqueId);
+    }
+
+    mapParameters(params) {
+        Object.keys(params).forEach((key) => {
+            this.mapParameter(key, params[key]);
+        })
     }
 
     mapParameter(param, obj) {
