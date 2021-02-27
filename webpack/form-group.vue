@@ -8,11 +8,16 @@
             <div v-if="prefix" class="flex-item">{{ prefix }}</div>
             <div class="--auto">
                 <slot name="element" v-if="$slots.element"></slot>
+                <pckg-datetime-picker v-else-if="isDateTimePicker"
+                                      v-model="myValue"
+                                      :placeholder="placeholder"
+                                      :options="{format: datetimeFormat, type: type}"></pckg-datetime-picker>
                 <input v-else-if="isInput" :type="type" class="form-control" :name="name" :id="uuidName"
                        :placeholder="placeholder"
                        v-model="myValue"/>
                 <slot v-else-if="type === 'slot'" name="slot" :my-value="myValue"></slot>
-                <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control" v-model="myValue">
+                <select v-else-if="type === 'select:multiple'" multiple :name="name" class="form-control"
+                        v-model="myValue">
                     <option>{{ placeholder }}</option>
                     <option v-for="(val, key) in myOptions.options" :value="getOptionValue(val, key)">
                         {{ getOptionName(val, key) }}
@@ -100,14 +105,24 @@ export default {
         };
     },
     computed: {
+        isDateTimePicker() {
+            return ['date', 'time', 'datetime'].indexOf(this.type) >= 0;
+        },
         isInput: function () {
-            return ['text', 'email', 'number', 'datetime', 'password'].indexOf(this.type) >= 0;
+            return ['text', 'email', 'number', 'password'].indexOf(this.type) >= 0;
         },
         uuidName: function () {
             return this.name + '_' + this.uuid;
         },
         editorVariables: function () {
             return (this.options && this.options.editor && this.options.editor.variables) || [];
+        },
+        datetimeFormat: function () {
+            return {
+                datetime: 'YYYY-MM-DD HH:mm',
+                date: 'YYYY-MM-DD',
+                time: 'HH:mm',
+            }[this.type]
         }
     },
     methods: {
