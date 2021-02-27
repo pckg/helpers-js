@@ -1,4 +1,3 @@
-import {Campaign, List} from "../../../../app/mailo/public/js/orm";
 import routerHelper from "./router.helper.js";
 
 export default function resolved(name) {
