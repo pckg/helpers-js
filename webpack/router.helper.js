@@ -2,7 +2,6 @@ import middlewareResolveStaticParams from "./middleware.resolveStaticParams";
 import dispatchPageLoaded from "./middleware.dispatchPageLoaded";
 import setSeoTags from "./middleware.setSeoTags";
 import gaPageLoad from "./middleware.gaPageLoad";
-import {Campaign, List} from "../../../../app/mailo/public/js/orm";
 
 export class RouterHelper {
 
