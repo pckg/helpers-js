@@ -1,17 +1,16 @@
 <script>
 import {
     inComponentCompiler,
-    inComponentRenderer
+    render
 } from "./inComponent.compiler.js";
 
 export default {
-    render: function (h) {
-        inComponentRenderer.call(this, h);
-    },
+    render,
     watch: {
         $route: {
             immediate: true,
             handler: function (newVal, oldVal) {
+                console.log('Route has changed, recompiling vue:route:template');
                 inComponentCompiler.call(this, newVal.meta.tags['vue:route:template']);
             }
         }

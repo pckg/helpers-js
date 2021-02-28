@@ -1,6 +1,4 @@
-import Vue from 'vue';
-
-export function inComponentRenderer(h) {
+export function render(h) {
     if (!this.templateRender) {
         if (this.$options.template) {
             return this.$options.template;
