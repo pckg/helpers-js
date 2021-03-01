@@ -9,7 +9,7 @@
     top: 0;
     left: 0;
     width: 0;
-    height: .4rem;
+    height: .333rem;
     background: linear-gradient(to left, var(--color-primary, var(--color-p)), var(--color-secondary, var(--color-s)));
     opacity: 0;
     cursor: progress;
