@@ -3,7 +3,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import VeeValidate from "vee-validate/dist/vee-validate.min";
-import PckgHelpersJs from "./setup.vue";
+import PckgHelpersJs from "./setup.vue.js";
 import router from './router.full.js';
 
 export class PckgApp {
