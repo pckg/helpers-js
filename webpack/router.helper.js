@@ -52,6 +52,13 @@ export class RouterHelper {
     }
 
     getResolvedObject(name, value) {
+        if (!this.paramMapper[name]) {
+            // or null?
+            return {
+                id: value
+            };
+        }
+
         return new (this.paramMapper[name])(value)
     }
 
