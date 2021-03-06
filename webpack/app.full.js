@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 import VeeValidate from "vee-validate/dist/vee-validate.min";
 import PckgHelpersJs from "./setup.vue.js";
 import router from './router.full.js';
+import routerHelper from './router.helper.js';
 
 export class PckgApp {
 
@@ -51,7 +52,7 @@ export class PckgApp {
 
     register(data) {
         if (typeof data === 'function') {
-            data = data({Vue, Vuex, VueRouter});
+            data = data({Vue, Vuex, VueRouter, routerHelper});
         }
 
         const store = window.$store = new Vuex.Store(this.$store);
