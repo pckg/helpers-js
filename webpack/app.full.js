@@ -4,9 +4,7 @@ import Vuex from 'vuex';
 import VueRouter from 'vue-router';
 import VeeValidate from "vee-validate/dist/vee-validate.min";
 import PckgHelpersJs from "./setup.vue";
-
 import router from './router.full.js';
-import auth from "../../../../app/demo/public/store/auth";
 
 export class PckgApp {
 
