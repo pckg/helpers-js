@@ -315,10 +315,11 @@ export class Record {
         $vue.$set(this.$data, key, value);
         return this;
     }
-    
+
     promise(task) {
         return new Promise(task);
     }
+
     static getDefault() {
         return new this({});
     }
@@ -833,4 +834,19 @@ export class HttpQLRepository extends HttpRepository {
 
     }
 
+}
+
+export function Fetcher(prop, of) {
+    return {
+        async ['resolve' + utils.ucfirst(prop)]() {
+            this.fetcher[prop] = 'loading';
+            (new of).all().then((all) => {
+                this[prop] = all;
+                this.fetcher[prop] = 'loaded';
+            }).catch(() => {
+                this.fetcher[prop] = 'error';
+            });
+            return [];
+        }
+    };
 }

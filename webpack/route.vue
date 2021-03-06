@@ -7,10 +7,11 @@ import {
 export default {
     render,
     watch: {
-        $route: {
+        '$route': {
             immediate: true,
+            deep: true,
             handler: function (newVal, oldVal) {
-                console.log('Route has changed, recompiling vue:route:template');
+                console.log('Route has changed, recompiling vue:route:template', newVal);
                 inComponentCompiler.call(this, newVal.meta.tags['vue:route:template']);
             }
         }
