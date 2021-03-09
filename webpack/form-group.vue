@@ -8,6 +8,7 @@
             <div v-if="prefix" class="flex-item">{{ prefix }}</div>
             <div class="--auto">
                 <slot name="element" v-if="$slots.element"></slot>
+                <span v-else-if="formMode === 'view'">{{ myValue }}</span>
                 <pckg-datetime-picker v-else-if="isDateTimePicker"
                                       v-model="myValue"
                                       :placeholder="placeholder"
@@ -38,7 +39,7 @@
                 <span v-else-if="type === 'encoded'">{{ myValue }}</span>
             </div>
         </div>
-        <div v-if="help" v-html="help"></div>
+        <div v-if="help" v-html="help" class="__help-text"></div>
         <htmlbuilder-validator-error v-if="name && $parent.errors"
                                      :bag="$parent.errors"
                                      ref="validatorComponent"
@@ -53,7 +54,7 @@ import HtmlbuilderValidatorError
 import {v4} from "uuid";
 
 export default {
-    inject: ['$validator'],
+    inject: ['$validator', 'formMode'],
     components: {HtmlbuilderValidatorError},
     props: {
         label: {

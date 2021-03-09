@@ -32,8 +32,8 @@ export default async function (to, from) {
             to.meta.tags['vue:route:template'] = data.html;
             to.meta.resolved = data.resolved || {};
             resolve();
-        }, function () {
-            console.log('error ajax response');
+        }, function (response) {
+            console.log('error ajax response', response);
             reject();
             $dispatcher.$emit('notification:error', 'Error navigating');
         });
