@@ -18,6 +18,7 @@ export class PckgApp {
         window.Vue = Vue;
         window.$dispatcher = new Vue();
         this.$store = {};
+        this.$router = null;
     }
 
     dev() {
@@ -44,23 +45,35 @@ export class PckgApp {
         return this;
     }
 
+    router(router = {}) {
+        this.$router = router;
+
+        return this;
+    }
+
     use(usage) {
         Vue.use(usage);
 
         return this;
     }
 
-    register(data) {
-        if (typeof data === 'function') {
-            data = data({Vue, Vuex, VueRouter, routerHelper});
-        }
+    register(data = {}) {
+        const myStore = window.$store = this.$store instanceof Vuex.Store
+            ? this.$store
+            : new Vuex.Store(this.$store);
 
-        const store = window.$store = new Vuex.Store(this.$store);
+        const myRouter = this.$router instanceof VueRouter
+            ? this.$router
+            : router;
+
+        if (data instanceof Function) {
+            data = data({Vue, Vuex, VueRouter, routerHelper}) || {};
+        }
 
         window.$vue = new Vue(Object.assign(data, {
             el: '#vue-app',
-            router,
-            store,
+            router: myRouter,
+            store: myStore,
         }));
 
         return this;
