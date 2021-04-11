@@ -66,9 +66,6 @@
                            :options="myOptions.options || {}"
                            :slider="myOptions.slider || false"
                            @remove="$emit('remove')"></d-input-multi>
-            <!-- used in maestro? -->
-            <pckg-htmlbuilder-dropzone v-else-if="type === 'picture'"
-                                       v-model="myValue"></pckg-htmlbuilder-dropzone>
             <input v-else-if="type === 'text'"
                    class="form-control"
                    type="text"
@@ -161,7 +158,7 @@
             </template>
 
             <!-- picture -->
-            <pckg-htmlbuilder-dropzone v-else-if="type === 'file:picture'"
+            <pckg-htmlbuilder-dropzone v-else-if="['file:picture', 'picture'].includes(type)"
                                        :url="myOptions.url || null"
                                        :params="myOptions.params || {}"
                                        :current="myOptions.current || null"

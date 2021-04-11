@@ -52,6 +52,11 @@ export default {
             return [this.active ? '--in --loading' : '--out', this.percentage === 100 ? '--loaded' : ''];
         }
     },
+    watch: {
+        active(active) {
+            $('body')[active ? 'addClass' : 'removeClass']('cursor-wait');
+        }
+    },
     created: function () {
         $dispatcher.$on('page:loading', () => {
             console.log('page:loading');

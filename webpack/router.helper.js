@@ -10,8 +10,6 @@ export class RouterHelper {
     }
 
     beforeEach(to, from, next) {
-        console.log('before each', to, from);
-
         typeof $vue !== 'undefined' && $dispatcher.$emit('page:loading');
 
         if ((to?.meta?.resolves || []).length > 0) {
@@ -22,19 +20,16 @@ export class RouterHelper {
     }
 
     beforeResolve(to, from, next) {
-        console.log('before resolve', to, from);
-
         middlewareResolveStaticParams(to, from).then(() => {
-            console.log('middleware resolve static params resolved');
             next();
         }).catch((e) => {
             $dispatcher.$emit('page:errored');
-            console.log('middleware resolve static params rejected', e);
             next(false);
         });
     }
 
     afterEach(to, from) {
+        try { document.body.scrollIntoView({behavior: 'smooth'}); } catch (e) {}
         dispatchPageLoaded();
         let title = setSeoTags(to);
         gaPageLoad(to, title);

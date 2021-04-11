@@ -1,5 +1,14 @@
 export default async function (to, from) {
     return new Promise((resolve, reject) => {
+        /**
+         * Check for generic route id?
+         */
+        if (typeof $vue === 'undefined') {
+            console.log('other route?');
+            resolve(); // yes?
+            return;
+        }
+
         if (Object.keys(to.params).length === 0) {
             console.log('No params to resolve');
             return resolve();
@@ -13,8 +22,8 @@ export default async function (to, from) {
         $dispatcher.$emit('page:resolving');
         let tags = to.meta.tags;
         let routeId = typeof tags === 'object' ? tags['generic:id'] : null;
+
         console.log('getting route', routeId);
-        let add = to.path.indexOf('?') > 0 ? '&html=1' : '?html=1';
 
         if (false && JSON.stringify(to.params) === JSON.stringify(from.params) && to.meta.tags['vue:route:template']) {
             //to.meta.tags['vue:route:template'] = from.meta.tags['vue:route:template']; // yeah?
@@ -25,7 +34,8 @@ export default async function (to, from) {
         /**
          * First option, should be supported by default?
          */
-        http.get(to.path + add, function (data) {
+        console.log('getting from remote', to.path);
+        http.get(to.path, function (data) {
             console.log('got ajax response');
             $store.commit('setActions', []);
             $store.commit('mergeMetaData', data.metadata || {});
@@ -36,6 +46,10 @@ export default async function (to, from) {
             console.log('error ajax response', response);
             reject();
             $dispatcher.$emit('notification:error', 'Error navigating');
+        }, {
+            beforeSend(request) {
+                request.setRequestHeader("X-Pckg-XHR", '1');
+            }
         });
 
         /**

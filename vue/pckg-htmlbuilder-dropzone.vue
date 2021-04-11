@@ -248,85 +248,87 @@
                 }
 
                 this.original = this.myCurrent;
-                this._dropzone = new Dropzone('#' + this.id, {
-                    url: this.url,
-                    params: this.params,
-                    headers: headers,
-                    previewsContainer: '#' + this.id + '-previews',
-                    previewTemplate: '<div></div>',
-                    clickable: this.$refs.upload,
-                    autoProcessQueue: !this.options.manualProcess,
-                    maxFilesize: this.options.maxSize,
-                    acceptedFiles: this.accept,
-                    uploadprogress: function (file, progress, bytesSent) {
-                        this.state = 'uploading';
-                        this.progress = progress;
-                    }.bind(this),
-                    success: function (file, data) {
-                        this.hover = false;
-                        if (data.success) {
-                            this.prev = this.myCurrent;
-                            this.myCurrent = data.url;
-                            this.state = 'success';
-                            if (this._makeResolve) {
-                                this._makeResolve();
-                            }
-                        } else {
-                            this.state = 'error';
-                            this.errorMessage = data.message || 'Error uploading file';
-                            if (this._makeReject) {
-                                this._makeReject();
-                            }
-                        }
+                this.$nextTick(() => {
+                  this._dropzone = new Dropzone('#' + this.id, {
+                      url: this.url,
+                      params: this.params,
+                      headers: headers,
+                      previewsContainer: '#' + this.id + '-previews',
+                      previewTemplate: '<div></div>',
+                      clickable: this.$refs.upload,
+                      autoProcessQueue: !this.options.manualProcess,
+                      maxFilesize: this.options.maxSize,
+                      acceptedFiles: this.accept,
+                      uploadprogress: function (file, progress, bytesSent) {
+                          this.state = 'uploading';
+                          this.progress = progress;
+                      }.bind(this),
+                      success: function (file, data) {
+                          this.hover = false;
+                          if (data.success) {
+                              this.prev = this.myCurrent;
+                              this.myCurrent = data.url;
+                              this.state = 'success';
+                              if (this._makeResolve) {
+                                  this._makeResolve();
+                              }
+                          } else {
+                              this.state = 'error';
+                              this.errorMessage = data.message || 'Error uploading file';
+                              if (this._makeReject) {
+                                  this._makeReject();
+                              }
+                          }
 
-                        if (data.message) {
-                            $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message);
-                        }
+                          if (data.message) {
+                              $dispatcher.$emit('notification:' + (data.success ? 'success' : 'error'), data.message);
+                          }
 
-                        if (data.success) {
-                            this.$emit('input', data.url);
-                            this.$emit('uploaded', {
-                                url: data.url,
-                                filename: data.filename || null,
-                                data: data
-                            });
-                        }
+                          if (data.success) {
+                              this.$emit('input', data.url);
+                              this.$emit('uploaded', {
+                                  url: data.url,
+                                  filename: data.filename || null,
+                                  data: data
+                              });
+                          }
 
-                        setTimeout(function () {
-                            this.setNullState();
-                        }.bind(this), 3333);
-                    }.bind(this),
-                    error: function (data, response) {
-                        this.hover = false;
-                        this.state = 'error';
-                        this.errorMessage = 'Error uploading file';
-                        this.$emit('uploaded', {
-                            url: null,
-                            data: data
-                        });
-                    }.bind(this),
-                    dragenter: function (e) {
-                        this.hover = true;
-                        $dispatcher.$emit('pckg-htmlbuilder-dropzone:all:dragenter', this.id);
-                    }.bind(this),
-                    dragleave: function (e) {
-                        if (!($(e.target).is($('#' + this.id)))) {
-                            return;
-                        }
-                        this.hover = false;
-                    }.bind(this),
-                    init: function () {
-                    }
-                });
-                this._dropzone.on("drop", (e) => {
-                    $dispatcher.$emit('body:dragend', e);
-                    $('body').removeClass('has-drag');
-                });
-                this._dropzone.on("addedfile", () => {
-                    this.state = 'queued';
-                });
-                this._dropzone.on("addedfiles", () => {
-                    this.state = 'queued';
+                          setTimeout(function () {
+                              this.setNullState();
+                          }.bind(this), 3333);
+                      }.bind(this),
+                      error: function (data, response) {
+                          this.hover = false;
+                          this.state = 'error';
+                          this.errorMessage = 'Error uploading file';
+                          this.$emit('uploaded', {
+                              url: null,
+                              data: data
+                          });
+                      }.bind(this),
+                      dragenter: function (e) {
+                          this.hover = true;
+                          $dispatcher.$emit('pckg-htmlbuilder-dropzone:all:dragenter', this.id);
+                      }.bind(this),
+                      dragleave: function (e) {
+                          if (!($(e.target).is($('#' + this.id)))) {
+                              return;
+                          }
+                          this.hover = false;
+                      }.bind(this),
+                      init: function () {
+                      }
+                  });
+                  this._dropzone.on("drop", (e) => {
+                      $dispatcher.$emit('body:dragend', e);
+                      $('body').removeClass('has-drag');
+                  });
+                  this._dropzone.on("addedfile", () => {
+                      this.state = 'queued';
+                  });
+                  this._dropzone.on("addedfiles", () => {
+                      this.state = 'queued';
+                  });
                 });
             },
             deleteFile: function () {

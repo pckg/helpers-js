@@ -5,7 +5,6 @@
 </template>
 
 <script>
-console.log('importing tinymce');
 
 /*import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autolink';
@@ -93,7 +92,6 @@ export default {
         },
         initEditor: function () {
             this.$nextTick(() => {
-                console.log('in next tick');
                 initTinymce(this.id, {
                     forced_root_block: this.forcedRootBlock,
                     variables: this.variables,
