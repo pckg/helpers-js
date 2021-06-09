@@ -31,6 +31,10 @@ export default async function (to, from) {
             return resolve();
         }
 
+        if (tags && tags['resolve:manual']) {
+            return resolve();
+        }
+
         /**
          * First option, should be supported by default?
          */
