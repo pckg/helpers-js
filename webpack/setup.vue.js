@@ -1,8 +1,9 @@
 import FormGroup from './form-group.vue';
 import PbRouteLayout from './route.vue';
-import LoaderIndicator from './loader-indicator.vue';
+//import LoaderIndicator from './loader-indicator.vue';
 import PckgModal from './modal.vue';
 import PckgHtmleditor from "./../vue/pckgHtmleditor.vue";
+const LoaderIndicator = () => import("./loader-indicator.vue"); // this imports css
 
 export default {
     install(Vue) {
