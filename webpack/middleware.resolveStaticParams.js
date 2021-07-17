@@ -1,53 +1,55 @@
+import routerHelper from "./router.helper.js";
+
+const resolveVuex = (resolve, params) => {
+    $store.dispatch('page/setResolvedParams', params);
+    resolve();
+}
+
 export default async function (to, from) {
     return new Promise((resolve, reject) => {
         /**
          * Check for generic route id?
          */
         if (typeof $vue === 'undefined') {
-            console.log('other route?');
-            resolve(); // yes?
-            return;
+            // initial route
+            return resolveVuex(resolve, to.meta.resolved); // yes?
         }
 
         if (Object.keys(to.params).length === 0) {
-            console.log('No params to resolve');
-            return resolve();
+            // no params to resolve
+            return resolveVuex(resolve, {});
         }
 
         if (!from.name) {
-            console.log('Should be pre-resolved');
-            return resolve();
+            // should be pre-resolved
+            return resolveVuex(resolve, {});
         }
 
         $dispatcher.$emit('page:resolving');
         let tags = to.meta.tags;
         let routeId = typeof tags === 'object' ? tags['generic:id'] : null;
 
-        console.log('getting route', routeId);
-
         if (false && JSON.stringify(to.params) === JSON.stringify(from.params) && to.meta.tags['vue:route:template']) {
             //to.meta.tags['vue:route:template'] = from.meta.tags['vue:route:template']; // yeah?
-            console.log('same route params?');
+            // same route params?
             return resolve();
         }
 
         if (tags && tags['resolve:manual']) {
-            return resolve();
+            // manually resolved
+            return resolveVuex(resolve, {});
         }
 
         /**
          * First option, should be supported by default?
          */
-        console.log('getting from remote', to.path);
         http.get(to.path, function (data) {
-            console.log('got ajax response');
             $store.commit('setActions', []);
             $store.commit('mergeMetaData', data.metadata || {});
             to.meta.tags['vue:route:template'] = data.html;
             to.meta.resolved = data.resolved || {};
-            resolve();
+            resolveVuex(resolve, to.meta.resolved);
         }, function (response) {
-            console.log('error ajax response', response);
             reject();
             $dispatcher.$emit('notification:error', 'Error navigating');
         }, {
@@ -61,7 +63,6 @@ export default async function (to, from) {
          */
         return;
         http.get('/api/' + url + '/' + this.$router.currentRoute.params[param], (data) => {
-            console.log('fetched route param ', param, data[param]);
             this.$router.currentRoute.meta.resolved[param] = of ? new of(data[param]) : data[param];
             this.loading = false;
             $dispatcher.$emit('page:loaded');

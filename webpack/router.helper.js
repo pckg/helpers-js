@@ -54,6 +54,11 @@ export class RouterHelper {
             };
         }
 
+        // don't double wrap
+        if (value instanceof this.paramMapper[name]) {
+            return value;
+        }
+
         return new (this.paramMapper[name])(value)
     }
 
