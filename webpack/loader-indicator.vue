@@ -59,13 +59,10 @@ export default {
     },
     created: function () {
         $dispatcher.$on('page:loading', () => {
-            console.log('page:loading');
             this.percentage = 0;
             this.active = false;
             this.$nextTick(() => {
-                console.log('page:loading next');
                 if (this.percentage > 0) {
-                    console.log('already loaded?');
                     return;
                 }
                 this.percentage = 50;
@@ -73,12 +70,10 @@ export default {
             });
         });
         $dispatcher.$on('page:resolving', () => {
-            console.log('page:resolving');
             this.percentage = 66;
             this.active = true;
         });
         $dispatcher.$on('page:loaded', () => {
-            console.log('page:loaded');
             this.percentage = 100;
             setTimeout(() => {
                 this.percentage = 0;
@@ -86,7 +81,6 @@ export default {
             }, 333);
         });
         $dispatcher.$on('page:errored', () => {
-            console.log('page errored');
             this.percentage = 0;
             this.active = false;
             $dispatcher.$emit('notification:error', 'Error loading page');
