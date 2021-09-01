@@ -1,5 +1,5 @@
 <template>
-    <div class="c-loader-indicator" :class="stateClass"></div>
+    <div class="c-loader-indicator" :class="stateClass" :style="{'--indicator-width': `${percentage}%`}"></div>
 </template>
 
 <style lang="less" scoped>
@@ -17,7 +17,13 @@
 
     &.--in {
         opacity: 1;
-        animation: slideright 2s infinite;
+        &.--animated {
+            animation: slideright 2s infinite;
+        }
+
+        &:not(.--animated) {
+            width: var(--indicator-width, 30%);
+        }
     }
 
     &.--out {
@@ -44,12 +50,17 @@ export default {
     data: function () {
         return {
             percentage: 0,
-            active: false
+            active: false,
+            animated: true,
         };
     },
     computed: {
         stateClass: function () {
-            return [this.active ? '--in --loading' : '--out', this.percentage === 100 ? '--loaded' : ''];
+            return [
+                this.active ? '--in --loading' : '--out',
+                this.percentage === 100 ? '--loaded' : null,
+                this.animated ? '--animated' : null,
+            ];
         }
     },
     watch: {
@@ -76,12 +87,14 @@ export default {
         $dispatcher.$on('page:percentage', (percentage) => {
             this.percentage = percentage;
             this.active = percentage > 0 && percentage < 100;
+            this.animated = !this.active;
         });
         $dispatcher.$on('page:loaded', () => {
             this.percentage = 100;
             setTimeout(() => {
                 this.percentage = 0;
                 this.active = false;
+                this.animated = true;
             }, 333);
         });
         $dispatcher.$on('page:errored', () => {
