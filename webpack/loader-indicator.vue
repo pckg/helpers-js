@@ -22,6 +22,7 @@
         }
 
         &:not(.--animated) {
+            transition: all 333ms ease-in-out;
             width: var(--indicator-width, 30%);
         }
     }
