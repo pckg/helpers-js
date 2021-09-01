@@ -73,6 +73,10 @@ export default {
             this.percentage = 66;
             this.active = true;
         });
+        $dispatcher.$on('page:percentage', (percentage) => {
+            this.percentage = percentage;
+            this.active = percentage > 0 && percentage < 100;
+        });
         $dispatcher.$on('page:loaded', () => {
             this.percentage = 100;
             setTimeout(() => {
