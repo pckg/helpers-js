@@ -12,7 +12,7 @@ export default {
         Vue.component('loader-indicator', LoaderIndicator);
 
         Vue.component('pckg-modal', PckgModal);
-        if (!(options.disabled ?? []).includes('form-group')) {
+        if (!options || !(options.disabled ?? []).includes('form-group')) {
             Vue.component('form-group', FormGroup);
         }
         Vue.component('pckg-htmleditor', PckgHtmleditor);
