@@ -5,11 +5,15 @@
                 <div class="modal-container container" :class="sizeClass">
                     <a href="#"
                        @click.prevent="$emit('close')"
-                       class="absolute color-white"
-                       style="top: -4.8rem; right: -4.8rem; font-size: 3.6rem;"><ion-icon name="close-circle-outline"></ion-icon></a>
-                    <slot></slot>
-                    <component v-if="component" :is="component" v-bind="props" class="padding-md"
-                               @close="$emit('close')"></component>
+                       class="absolute"
+                       style="top: 1rem; right: 1rem; font-size: 3.6rem;">
+                        <i class="fal fa-times-circle"></i>
+                    </a>
+                    <div class="modal-overflow">
+                        <slot></slot>
+                        <component v-if="component" :is="component" v-bind="props" class="padding-md"
+                                   @close="$emit('close')"></component>
+                    </div>
                 </div>
             </div>
         </div>
