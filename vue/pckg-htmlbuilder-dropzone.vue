@@ -36,7 +36,7 @@
         </div>
 
         <!-- dropzone legacy -->
-        <div type="file" class="hidden" ref="upload"/>
+        <div type="file" class="hidden" ref="upload" :id="id"/>
         <div :id="id + '-previews'" class="hidden"></div>
 
     </div>
