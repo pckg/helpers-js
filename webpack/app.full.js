@@ -19,6 +19,8 @@ export class PckgApp {
         window.$dispatcher = new Vue();
         this.$store = {};
         this.$router = null;
+        this.myStore = null;
+        this.myRouter = null;
     }
 
     dev() {
@@ -58,11 +60,11 @@ export class PckgApp {
     }
 
     register(data = {}) {
-        const myStore = window.$store = this.$store instanceof Vuex.Store
+        const myStore = window.$store = this.myStore = this.$store instanceof Vuex.Store
             ? this.$store
             : new Vuex.Store(this.$store);
 
-        const myRouter = this.$router instanceof VueRouter
+        const myRouter = this.myRouter = this.$router instanceof VueRouter
             ? this.$router
             : router;
 

@@ -44,7 +44,7 @@
             <d-input-toggle v-else-if="type === 'toggle'"
                             :off="myOptions.off || null"
                             :on="myOptions.on || 1"
-                            :is-disabled="myOptions.disabled || false"
+                            :is-disabled="myOptions.disabled || disabled || false"
                             v-model="myValue"
                             :class="myOptions.className || ''"></d-input-toggle>
             <d-select-pills v-else-if="type === 'pills'"
@@ -73,13 +73,16 @@
                    v-model="myComputedValue"
                    :placeholder="placeholder"
                    :id="myOptions.id || null"
-                   :disabled="myOptions.disabled || false"
+                   :disabled="myOptions.disabled || disabled || false"
                    :class="myOptions.className || ''"/>
             <input v-else-if="type === 'email'"
                    class="form-control"
                    type="email"
+                   :name="name"
                    v-model="myValue"
                    :placeholder="placeholder"
+                   :id="myOptions.id || null"
+                   :disabled="myOptions.disabled || disabled || false"
                    :class="myOptions.className || ''"/>
             <template v-else-if="type === 'number'">
                 <div class="input-group" v-if="$slots.prefix || $slots.suffix">
@@ -241,6 +244,10 @@ export default {
         },
         asterisk: {
             default: '* '
+        },
+        disabled: {
+            default: false,
+            type: Boolean
         }
     },
     model: {

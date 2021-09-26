@@ -1,10 +1,10 @@
 import FormGroup from './form-group.vue';
 import PbRouteLayout from './route.vue';
-//import LoaderIndicator from './loader-indicator.vue';
 import PckgModal from './modal.vue';
 import PckgHtmleditor from "./../vue/pckgHtmleditor.vue";
 const LoaderIndicator = () => import("./loader-indicator.vue"); // this imports css
 const PckgDispatcherNotifications = () => import("../alert/dispatcher-notifications.vue"); // this also
+const HtmlbuilderValidatorError = () => import("../../../../vendor/pckg/htmlbuilder/src/Pckg/Htmlbuilder/View/htmlbuilderValidatorError.vue");
 
 export default {
     install(Vue, options) {
@@ -17,6 +17,6 @@ export default {
         }
         Vue.component('pckg-htmleditor', PckgHtmleditor);
         Vue.component('pckg-dispatcher-notifications', PckgDispatcherNotifications);
-        //Vue.component('htmlbuilder-validator-error', import("../../../../vendor/pckg/htmlbuilder/src/Pckg/Htmlbuilder/View/htmlbuilderValidatorError.vue"));
+        Vue.component('htmlbuilder-validator-error', HtmlbuilderValidatorError);
     }
 };
