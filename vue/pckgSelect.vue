@@ -168,18 +168,16 @@
 
                 let options = this.finalOptions;
                 $.each(options, (i, option) => {
-                    let k = this.getId(option, i);
-                    if (selected.indexOf(k) >= 0 || selected.indexOf(parseInt(k)) >= 0 || selected.indexOf(k.toString()) >= 0) {
-                        titles.push(this.getTitle(option, i));
+                    if (selected.indexOf(option.value) >= 0 || selected.indexOf(parseInt(option.value)) >= 0 || selected.indexOf(option.value.toString()) >= 0) {
+                        titles.push(option.name);
                     }
                 });
 
                 let groups = this.finalOptionGroups;
                 $.each(groups, (i, optionGroup) => {
                     $.each(optionGroup, (j, option) => {
-                        let k = this.getId(option, j);
-                        if (selected.indexOf(k) >= 0 || selected.indexOf(parseInt(k)) >= 0 || selected.indexOf(k.toString()) >= 0) {
-                            titles.push(this.getTitle(option, j));
+                        if (selected.indexOf(option.value) >= 0 || selected.indexOf(parseInt(option.value)) >= 0 || selected.indexOf(option.value.toString()) >= 0) {
+                            titles.push(option.name);
                         }
                     });
                 });
@@ -315,6 +313,9 @@
                         return;
                     }
 
+                    if (!item) {
+                        return;
+                    }
                     let k = this.getId(item, key);
                     let title = this.getTitle(item, key);
                     if (this.isOptionFiltered(k, title)) {
