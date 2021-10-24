@@ -26,8 +26,24 @@
     </table>
 </template>
 
-<script>
+<style lang="less" scoped>
+table {
+    min-width: 100%;
+    width: auto;
+    max-width: none;
+    font-size: 1.4rem;
+    color: #111;
+}
+th {
+    white-space: nowrap;
+    border-bottom-width: 1px;
+    text-transform: uppercase;
+    color: #777;
+    font-weight: normal;
+}
+</style>
 
+<script>
 import PckgTableActions from './table-actions.vue';
 
 export default {
