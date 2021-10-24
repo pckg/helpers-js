@@ -83,10 +83,10 @@
                 default: true
             },
             title: {
-                default: ''
+                default: () => 'name'
             },
             id: {
-                default: '',
+                default: () => 'value',
                 type: String
             },
             flat: {
@@ -147,10 +147,15 @@
                     return this.options;
                 }
 
-                let finalOptions = {};
+                const isArray = Array.isArray(this.options);
+                const finalOptions = isArray ? [] : {};
                 $.each(this.options, (i, option) => {
                     if (JSON.stringify(option).toLowerCase().indexOf(this.filter.toLowerCase()) >= 0) {
-                        finalOptions[i] = option;
+                        if (isArray) {
+                            finalOptions.push(option);
+                        } else {
+                            finalOptions[i] = option;
+                        }
                     }
                 });
 
@@ -238,8 +243,21 @@
                     && (typeof key == 'string' && key.toLowerCase().indexOf(this.search.toLowerCase()) < 0 || item == this.search);
             },
             extractOptions: function (o) {
-                var options = [];
+                const isArray = Array.isArray(o);
 
+                // pass array with value and name as keys
+                if (isArray) {
+                    if (!o.length) {
+                        return [];
+                    }
+
+                    let keys = Object.keys(o[0]);
+                    if (keys.includes('value') && keys.includes('name')) {
+                        return o.filter(({value, name}) => !this.isOptionFiltered(value, name));
+                    }
+                }
+
+                let options = [];
                 $.each(o, function (key, item) {
                     if (this.flat) {
                         let title = this.getTitle(item, key);
@@ -275,6 +293,26 @@
             extractOptionGroups: function (o) {
                 if (this.flat) {
                     return {};
+                }
+
+                const isArray = Array.isArray(o);
+                if (isArray) {
+                    if (!o.length) {
+                        return [];
+                    }
+
+                    let firstItem = o[0];
+                    if (typeof firstItem === 'object') {
+                        let keys = Object.keys(firstItem);
+                        if (keys.includes('value') && keys.includes('name')) {
+                            // should be an option
+                            return [];
+                        }
+                        if (keys.includes('id')) {
+                            // should be an option
+                            return [];
+                        }
+                    }
                 }
 
                 var options = {};
@@ -352,14 +390,14 @@
                     return this.title(option);
                 }
 
-                return option[this.title || 'name'];
+                return option[this.title];
             },
             getId: function (option, id) {
                 if (typeof option != 'object') {
                     return id;
                 }
 
-                return option[this.id || 'value'] || id;
+                return option[this.id] || id;
             },
             toggleOption: function ($event, key) {
                 if (this.initialMultiple) {
