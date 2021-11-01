@@ -3,8 +3,8 @@ export default function (to) {
         return;
     }
 
-    const title = to.meta.tags['seo:title'];
-    $store.dispatch('page/setSeo', {title: to.meta.tags['seo:title']});
-
+    const title = `${to.meta.tags['seo:title']} - ${Pckg.site.title}`;
+    $store.dispatch('page/setSeo', {title});
+    
     return title;
 }

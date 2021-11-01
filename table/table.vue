@@ -19,7 +19,19 @@
                                     :actions="tableObject.actions"></pckg-table-actions>
             </td>
             <template v-for="field in tableObject.fields">
-                <td v-if="!field.condition || field.condition()">{{ getFieldValue(field, record) }}</td>
+                <td v-if="!field.condition || field.condition()">
+                    <div>
+                        {{ getFieldValue(field, record) }}
+                    </div>
+                    <ul v-if="field.actions">
+                        <li v-for="(key, name) in field.actions">
+                            <a href="#"
+                               @click.prevent="handleClick(key, record)">
+                                {{ name }}
+                            </a>
+                        </li>
+                    </ul>
+                </td>
             </template>
         </tr>
         </tbody>
@@ -62,6 +74,10 @@ export default {
             }
 
             return record[field.field];
+        },
+        handleClick(key, record) {
+            const handler = this.tableObject.actions().find(action => action?.key === key);
+            handler && handler(record);
         }
     }
 }

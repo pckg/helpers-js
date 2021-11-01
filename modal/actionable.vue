@@ -1,11 +1,11 @@
 <template>
-    <pckg-modal size-class="--md" class="--decorate-modal" :class="'--decorate-' + decorate">
+    <pckg-modal @close="$emit('no')" size-class="--md" class="--decorate-modal" :class="'--decorate-' + decorate">
 
-        <div class="padding-lg">
+        <div class="p-lg">
             <div class="__decoration"></div>
             <div class="flex-grid --gap-lg text-center">
 
-                <div class="margin-md">
+                <div class="m-md">
                     <i class="fas fa-fw fa-2x" :class="['color-' + decorate, 'fa-' + icon]"></i>
                 </div>
 

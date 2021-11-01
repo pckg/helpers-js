@@ -39,7 +39,7 @@ export default {
             default: null
         },
         sizeClass: {
-            default: '--lg',
+            default: '--md',
         }
     }
 }
