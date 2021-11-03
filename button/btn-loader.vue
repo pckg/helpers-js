@@ -1,5 +1,5 @@
 <template>
-    <button class="btn" :class="button" @click.prevent="click" type="button">
+    <button class="btn" :class="button" @click.prevent="click" type="button" :disabled="disabled">
         <i class="fal fa-fw margin-right-xxs" :class="'fa-' + myIcon" v-if="myIcon"></i>
         <slot></slot>
     </button>
@@ -13,6 +13,9 @@ export default {
         },
         button: {
             default: 'btn-primary'
+        },
+        disabled: {
+            default: () => false,
         }
     },
     data: function () {
