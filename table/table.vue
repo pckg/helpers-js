@@ -2,7 +2,7 @@
     <table class="table --hover --padding-sm">
         <thead>
         <tr>
-            <th></th>
+            <!--<th></th>-->
             <th v-if="tableObject.actions.length > 0"></th>
             <template v-for="field in tableObject.fields">
                 <th v-if="!field.condition || field.condition()">{{ field.title }}</th>
@@ -11,7 +11,7 @@
         </thead>
         <tbody class="section-4-hover">
         <tr v-for="record in tableObject.records">
-            <td>{{ record.id }}</td>
+            <!--<td>{{ record.id }}</td>-->
             <td v-if="tableObject.actions.length > 0"
                 class="nobr">
                 <pckg-table-actions class="visible@section-hover"
@@ -20,13 +20,18 @@
             </td>
             <template v-for="field in tableObject.fields">
                 <td v-if="!field.condition || field.condition()">
-                    <div>
-                        {{ getFieldValue(field, record) }}
-                    </div>
-                    <ul v-if="field.actions">
-                        <li v-for="(key, name) in field.actions">
+                    <slot :name="`field-${field.field}`"
+                          :field="field"
+                          :record="record">
+                        <div>
+                            {{ getFieldValue(field, record) }}
+                        </div>
+                    </slot>
+                    <ul v-if="field.modals">
+                        <li v-for="(name, key) in field.modals">
                             <a href="#"
-                               @click.prevent="handleClick(key, record)">
+                               class="color-grayish"
+                               @click.prevent="tableObject.openModal(key, record)">
                                 {{ name }}
                             </a>
                         </li>
@@ -46,6 +51,7 @@ table {
     font-size: 1.4rem;
     color: #111;
 }
+
 th {
     white-space: nowrap;
     border-bottom-width: 1px;
@@ -69,8 +75,8 @@ export default {
     },
     methods: {
         getFieldValue(field, record) {
-            if (typeof field.field === 'function') {
-                return field.field(record);
+            if (typeof field.value === 'function') {
+                return field.value(record);
             }
 
             return record[field.field];
