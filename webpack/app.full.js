@@ -69,7 +69,7 @@ export class PckgApp {
             : router;
 
         if (data instanceof Function) {
-            data = data({Vue, Vuex, VueRouter, routerHelper}) || {};
+            data = data({Vue, Vuex, VueRouter, routerHelper, myStore}) || {};
         }
 
         window.$vue = new Vue(Object.assign(data, {
