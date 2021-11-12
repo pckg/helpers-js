@@ -60,14 +60,14 @@
             </ul>
         </span>
 
-        <template v-if="slider">
+        <template v-if="slider && nounit && ['rem','em','px','deg','%'].includes(myValue)">
             <span class="__slider">
                 <input type="range"
                        :min="slider.min"
                        :max="slider.max"
                        :step="slider.step || 1"
                        v-model="myCustomValue"
-                       :disabled="!nounit && ['px','deg','%'].indexOf(myValue) === -1"/>
+                       :disabled="!nounit && !['rem','em','px','deg','%'].includes(myValue)"/>
             </span>
             <span class="__remove">
                 <a href="#" @click.prevent="$emit('remove')"><i class="fal fa-fw fa-trash"></i></a>
