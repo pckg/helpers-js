@@ -48,7 +48,7 @@
 
     export default {
         name: 'pckg-htmlbuilder-dropzone',
-        mixins: [pckgCdn],
+        mixins: [CommsHubHelpers.cdn],
         props: {
             current: {
                 type: String,
