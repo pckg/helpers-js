@@ -96,7 +96,7 @@ export default {
                 return [];
             }
 
-            if (Object.is(modals)) {
+            if (typeof modals === 'object') {
                 return Object.keys(modals);
             }
 
