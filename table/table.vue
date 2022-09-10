@@ -27,8 +27,8 @@
                             {{ getFieldValue(field, record) }}
                         </div>
                     </slot>
-                    <ul v-if="field.modals">
-                        <li v-for="(name, key) in field.modals">
+                    <ul v-if="fieldHasModals(field, record)">
+                        <li v-for="(name, key) in getFieldModals(field, record)">
                             <a href="#"
                                class="color-grayish"
                                @click.prevent="tableObject.openModal(key, record)">
@@ -84,6 +84,27 @@ export default {
         handleClick(key, record) {
             const handler = this.tableObject.actions().find(action => action?.key === key);
             handler && handler(record);
+        },
+        getFieldModals(field, record) {
+            let modals = field.modals;
+
+            if (typeof modals === 'function') {
+                modals = modals(record);
+            }
+
+            if (!modals) {
+                return [];
+            }
+
+            if (typeof modals === 'object') {
+                return Object.keys(modals);
+            }
+
+            // should be array
+            return modals;
+        },
+        fieldHasModals(field, record) {
+            return this.getFieldModals(field, record).length > 0;
         }
     }
 }
